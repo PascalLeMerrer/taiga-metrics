@@ -1,0 +1,24 @@
+version: "3"
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile-server
+    volumes:
+      - ./server:/usr/src/app
+    ports:
+      - 4000:5000
+    links:
+      - db
+  db:
+    image: postgres:9-alpine
+    ports:
+      - 127.0.0.1:5432:5432
+  test:
+    build:
+        context: ./feature-tests
+        dockerfile: Dockerfile-feature-tests
+    volumes:
+      - ./feature-tests:/usr/src/app
+    links:
+      - server
