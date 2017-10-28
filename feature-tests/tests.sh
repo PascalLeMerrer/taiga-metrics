@@ -13,6 +13,7 @@ done
 tags="--tags=-wip"
 for param in "$@"
 do
+    # TODO a comma is missing to separate tags
  tags+=" --tags="
  tags+=$param
 done

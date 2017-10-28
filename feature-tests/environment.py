@@ -8,3 +8,4 @@ default_env = {
 def before_all(context):
     for k, v in default_env.items():
         os.environ[k] = v
+    context.test_user_credentials = 'test-user', 'test-password'

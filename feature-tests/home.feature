@@ -8,3 +8,12 @@ Feature: server responses
   Scenario: Test get default hello
     When I make a GET request to "/"
     Then the response status should be 200
+
+  Scenario: Test inserting in DB
+    When I make a GET request to "/insert"
+    Then the response status should be 200
+    And the JSON should be
+    """
+        { "msg" : "ProjectConfig inserted!" }
+    """
+

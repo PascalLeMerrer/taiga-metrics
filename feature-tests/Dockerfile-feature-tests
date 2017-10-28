@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY ./requirements.txt ./
 RUN pip install  --upgrade pip && pip install -r requirements.txt
 
-# BEHAVE_TAGS must be a comma separated list of strings
+# BEHAVE_TAGS must be a comma separated list of strings. It may be empty
 ARG BEHAVE_TAGS
 ENV TAGS=${BEHAVE_TAGS}
 ENTRYPOINT ["/bin/bash", "-c", "./tests.sh $TAGS"]
