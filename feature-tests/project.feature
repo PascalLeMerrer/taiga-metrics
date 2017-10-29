@@ -1,3 +1,4 @@
+@wip
 Feature: user
   As a Taiga user
   I can active metrics on my Taiga projects
@@ -5,6 +6,7 @@ Feature: user
   Background: Set target server address and headers
     Given I am using server "$SERVER"
 
+  @wip
   Scenario: User can list its Taiga projects
     # TODO review auth
     Given I set BasicAuth to test user credentials
@@ -30,6 +32,7 @@ Feature: user
     }
     """
 
+  @wip
   Scenario: User can get a given Taiga project's properties
     # TODO review auth
     Given I set BasicAuth to test user credentials
@@ -51,6 +54,7 @@ Feature: user
     }
     """
 
+  @wip
   Scenario: User can update a Taiga project preferences
     # TODO review auth
     Given I set BasicAuth to test user credentials

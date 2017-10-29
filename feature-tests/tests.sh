@@ -11,11 +11,10 @@ done
 >&2 echo "server is up - starting tests"
 
 tags="--tags=-wip"
-for param in "$@"
-do
-    # TODO a comma is missing to separate tags
+if [ $1 ]
+then
  tags+=" --tags="
- tags+=$param
-done
+ tags+=$1
+fi
 
 behave $tags --no-skipped

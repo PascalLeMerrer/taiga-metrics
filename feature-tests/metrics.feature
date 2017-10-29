@@ -1,10 +1,12 @@
-Feature: user
+@wip
+  Feature: user
   As a Taiga user
   I can get metrics on my Taiga projects
 
   Background: Set target server address and headers
     Given I am using server "$SERVER"
 
+  @wip
   Scenario: User can list its Taiga projects
     # TODO review auth
     Given I set BasicAuth to test user credentials
@@ -33,6 +35,7 @@ Feature: user
     }
     """
 
+  @wip
   Scenario: User can get a given Taiga project's properties
     # TODO review auth
     Given I set BasicAuth to test user credentials
@@ -52,13 +55,14 @@ Feature: user
             { "id": 1, name: "specifiy" },
             { "id": 2, name: "build"    },
             { "id": 3, name: "deploy"   },
-            { "id": 4, name: "done"     }"
+            { "id": 4, name: "done"     }
           ]
         }
       ]
     }
     """
 
+  @wip
   Scenario: User can update a Taiga project preferences
     # TODO review auth
     Given I set BasicAuth to test user credentials
@@ -91,6 +95,7 @@ Feature: user
     }
     """
 
+  @wip
   Scenario: User can activate metrics on a Taiga project
     # TODO review auth
     Given I set BasicAuth to test user credentials
