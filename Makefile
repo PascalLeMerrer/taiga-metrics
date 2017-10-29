@@ -6,7 +6,12 @@ help:           ## Show this help.
 run:
 run:	## 	 Build and start all containers
 	@echo -e "\033[35m > Run all \033[0m"
-	docker-compose build && docker-compose up # --abort-on-container-exit
+	docker-compose build && docker-compose up server
+
+test:
+test:	## 	 Run all tests
+	@echo -e "\033[35m > Run all \033[0m"
+	docker-compose build && docker-compose up test
 
 
 db: 	## Rebuild and run database
