@@ -4,4 +4,4 @@ behave-http==0.1.1
 jpath==1.5
 datadiff==2.0.0
 flask
-redis
+psycopg2==2.7.1

@@ -4,6 +4,7 @@ Feature: server responses
 
   Background: Set target server address and headers
     Given I am using server "$SERVER"
+    And I reset the database content
 
   Scenario: Test get default hello
     When I make a GET request to "/"

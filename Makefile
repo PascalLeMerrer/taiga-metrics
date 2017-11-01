@@ -11,7 +11,7 @@ run:	## 	 Build and start all containers
 test:
 test:	## 	 Run all tests
 	@echo -e "\033[35m > Run all \033[0m"
-	docker-compose build && docker-compose up test
+	docker-compose build && docker-compose up
 
 
 db: 	## Rebuild and run database
@@ -20,4 +20,4 @@ db: 	## Rebuild and run database
 
 db_shell: 	## Open PSQL
 	@echo -e "\033[7;34m > Open database shell   \033[0m"
-	docker exec -it taiga-metrics-db psql --user taigametricsdb --password taiga-metrics
+	docker exec -it db psql --user taigametrics --password taigametrics

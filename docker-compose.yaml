@@ -1,7 +1,7 @@
 version: "3"
 services:
   server:
-    container_name: taiga-metrics-server
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile-server
@@ -14,26 +14,35 @@ services:
     environment:
       POSTGRES_HOST: db
       # Postgres will create the DB with this name and user if needed
-      POSTGRES_DB: taiga-metrics
+      POSTGRES_DB:
       # The next values will be read from .env file
       POSTGRES_USER:
       POSTGRES_PASSWORD:
 
   db:
-    container_name: taiga-metrics-db
+    container_name: db
     image: postgres:9-alpine
     ports:
       - 127.0.0.1:5432:5432
     environment:
       # Postgres will create the DB with this name and user if needed
-      POSTGRES_DB: taiga-metrics
+      POSTGRES_DB:
       # The next values will be read from .env file
       POSTGRES_USER:
       POSTGRES_PASSWORD:
 
   test:
+    container_name: test
     build:
         context: ./feature-tests
         dockerfile: Dockerfile-feature-tests
     volumes:
       - ./feature-tests:/usr/src/app
+    depends_on:
+      - db
+      - server
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
