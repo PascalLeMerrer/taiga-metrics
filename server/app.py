@@ -49,7 +49,7 @@ migrate = Migrate(APP, DB)
 def index():
     return 'Hello, World!'
 
-@APP.route('/insert')
+@APP.route('/insert', methods = ['POST'])
 def insert():
     project_config = ProjectConfig(666, 1, 3)
     DB.session.add(project_config)
@@ -57,7 +57,7 @@ def insert():
     return "{ \"msg\" : \"ProjectConfig inserted!\" }"
 
 
-@APP.route('/isalive')
+@APP.route('/isalive', methods = ['GET'])
 def is_alive():
     return 'OK'
 
