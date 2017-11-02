@@ -3,7 +3,7 @@ import sys
 
 from time import sleep
 
-from flask import Flask
+from flask import Flask, jsonify, request
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -31,10 +31,8 @@ db_is_not_connected = True
 while db_is_not_connected:
     try:
         print("Checking connection to DB...")
-        sys.stdout.flush()
         DB.create_all()
         print("Connection to DB is OK.")
-        #sys.stdout.flush()
         db_is_not_connected = False
 
     except Exception as e:
@@ -62,6 +60,29 @@ def insert():
 @APP.route('/isalive')
 def is_alive():
     return 'OK'
+
+
+@APP.route('/sessions', methods = ['POST'])
+def login():
+    data = request.get_json()
+    print("login query parameters {}".format(data) )
+    sys.stdout.flush()
+    # fake implementation
+    # TODO query Taiga API
+    if ('username' not in data
+        or data['username'] != 'test-user'
+        or 'password' not in data
+        or data['password'] != 'test-password'):
+        response = jsonify(message ="BAD CREDENTIALS")
+        response.status_code = 401
+        return response
+
+    response = jsonify(
+        username="test-user",
+        full_display_name="TEST USER",
+        auth_token="TEST_AUTH_TOKEN"
+    )
+    return response
 
 if __name__ == '__main__':
     # activate hot reloading
