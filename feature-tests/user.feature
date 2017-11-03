@@ -10,11 +10,6 @@ Feature: user
     And I set template variable "PASSWORD" to "$PASSWORD"
 
 
-  Scenario: Non authenticated used cannot access metrics
-    When I make a GET request to "/project/1/metrics"
-    Then the response status should be 401
-
-
   Scenario: Test Login With Wrong Password should fail
     When I make a POST request to "/sessions"
     """
