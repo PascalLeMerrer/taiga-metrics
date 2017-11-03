@@ -8,11 +8,7 @@ Feature: user
 
   @wip
   Scenario: User can list its Taiga projects
-    # TODO review auth
-    Given I set BasicAuth to test user credentials
-    When I make a POST request to "/sessions"
-    Then the response status should be 200
-    And the JSON at path "sessionId" should match "\w"
+    Given I authenticate as test user
     When I make a GET request to "/projects"
     Then the response status should be 200
     And the JSON should be
@@ -34,11 +30,7 @@ Feature: user
 
   @wip
   Scenario: User can get a given Taiga project's properties
-    # TODO review auth
-    Given I set BasicAuth to test user credentials
-    When I make a POST request to "/sessions"
-    Then the response status should be 200
-    And the JSON at path "sessionId" should match "\w"
+    Given I authenticate as test user
     When I make a GET request to "/projects/2"
     Then the response status should be 200
     And the JSON should be
@@ -56,11 +48,7 @@ Feature: user
 
   @wip
   Scenario: User can update a Taiga project preferences
-    # TODO review auth
-    Given I set BasicAuth to test user credentials
-    When I make a POST request to "/sessions"
-    Then the response status should be 200
-    And the JSON at path "sessionId" should match "\w"
+    Given I authenticate as test user
     When I make a PUT request to "/projects/1"
     """
         { name: "project1",

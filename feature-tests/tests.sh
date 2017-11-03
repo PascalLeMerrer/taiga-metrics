@@ -19,4 +19,4 @@ then
  tags+=$1
 fi
 
-behave $tags --no-skipped
+behave $tags --no-skipped --no-logcapture --quiet

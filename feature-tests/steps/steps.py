@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 
 from behave import *
@@ -46,11 +47,6 @@ def eval_body(context):
         # Display the diff
         assert_equal(expected, real)
 
-@behave.given('I reset the database content')
-def reset_db(context):
-    cursor.execute("DELETE FROM project_config WHERE 1=1")
-    connection.commit()
-
 def equal(expected, real):
     """
     Compares two JSON objects
@@ -75,3 +71,42 @@ def equal(expected, real):
 
     return expected == real
 
+
+
+@behave.then('I set the header "{header}" to the JSON value at path "{jsonpath}"')
+@dereference_step_parameters_and_data
+def set_header_from_json(context, header, jsonpath):
+    value = jpath.get(jsonpath, context.response.json())
+    context.headers[header.encode('ascii')] = value.encode('ascii')
+
+
+@behave.given('I authenticate as test user')
+@dereference_step_parameters_and_data
+def authenticate_as_test_user(context):
+    context.execute_steps(u'''
+        Given I am using server "$SERVER"
+        And I set "Accept" header to "application/json"
+        And I set "Content-Type" header to "application/json"
+        When I make a POST request to "/sessions"
+        """
+        {
+          "username": "test-user",
+          "password": "test-password"
+        }
+        """
+        Then the response status should be 200
+        And the JSON at path "auth_token" should match "\w"
+        And the JSON should contain
+        """
+        {
+          "username": "test-user",
+          "full_display_name": "TEST USER"
+        }
+        """
+        Then I set the header "Authorization" to the JSON value at path "auth_token"
+        ''')
+
+@behave.given('I reset the database content')
+def reset_db(context):
+    cursor.execute("DELETE FROM project_config WHERE 1=1")
+    connection.commit()

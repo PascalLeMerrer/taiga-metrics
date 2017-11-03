@@ -8,6 +8,7 @@ from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+AUTH_HEADER = "Authorization"
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
 APP = Flask(__name__)
@@ -51,6 +52,10 @@ def index():
 
 @APP.route('/insert', methods = ['POST'])
 def insert():
+    token = request.headers[AUTH_HEADER]
+    if AUTH_HEADER not in request.headers:
+        return make_invalid_credentials_response()
+
     project_config = ProjectConfig(666, 1, 3)
     DB.session.add(project_config)
     DB.session.commit()
@@ -65,17 +70,16 @@ def is_alive():
 @APP.route('/sessions', methods = ['POST'])
 def login():
     data = request.get_json()
-    print("login query parameters {}".format(data) )
-    sys.stdout.flush()
+
     # fake implementation
     # TODO query Taiga API
-    if ('username' not in data
+    if (data is None
+        or 'username' not in data
         or data['username'] != 'test-user'
         or 'password' not in data
         or data['password'] != 'test-password'):
-        response = jsonify(message ="BAD CREDENTIALS")
-        response.status_code = 401
-        return response
+
+        return make_invalid_credentials_response()
 
     response = jsonify(
         username="test-user",
@@ -83,6 +87,12 @@ def login():
         auth_token="TEST_AUTH_TOKEN"
     )
     return response
+
+def make_invalid_credentials_response():
+    response = jsonify(message ="BAD CREDENTIALS")
+    response.status_code = 401
+    return response
+
 
 if __name__ == '__main__':
     # activate hot reloading

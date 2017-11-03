@@ -6,11 +6,14 @@ Feature: server responses
     Given I am using server "$SERVER"
     And I reset the database content
 
-  Scenario: Test get default hello
-    When I make a GET request to "/"
+  @wip
+  Scenario: Test verify healthcheck
+    When I make a GET request to "/isalive"
     Then the response status should be 200
 
+  # TODO remove
   Scenario: Test inserting in DB
+    Given I authenticate as test user
     When I make a POST request to "/insert"
     """
     """
