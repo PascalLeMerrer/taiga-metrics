@@ -1,8 +1,10 @@
 from flask import jsonify
 from app import APP
+from auth import requires_authentication
 
 
 @APP.route('/projects', methods = ['GET'])
+@requires_authentication
 def get_projects():
     """ returns project list """
     # TODO replace fake implementation
@@ -26,6 +28,7 @@ def get_projects():
     return response
 
 @APP.route('/projects/<id>', methods = ['GET'])
+@requires_authentication
 def get_project(id):
     """ returns project details """
     # TODO replace fake implementation

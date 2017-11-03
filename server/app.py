@@ -8,7 +8,8 @@ from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-AUTH_HEADER = "Authorization"
+from auth import are_valid_credentials, authenticate, requires_authentication
+
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
 APP = Flask(__name__)
@@ -50,12 +51,11 @@ migrate = Migrate(APP, DB)
 def index():
     return 'Hello, World!'
 
-@APP.route('/insert', methods = ['POST'])
-def insert():
-    token = request.headers[AUTH_HEADER]
-    if AUTH_HEADER not in request.headers:
-        return make_invalid_credentials_response()
 
+# example of insertion in DB - MUST be removed
+@APP.route('/insert', methods = ['POST'])
+@requires_authentication
+def insert():
     project_config = ProjectConfig(666, 1, 3)
     DB.session.add(project_config)
     DB.session.commit()
@@ -64,33 +64,26 @@ def insert():
 
 @APP.route('/isalive', methods = ['GET'])
 def is_alive():
+    """ server healthcheck endpoint """
     return 'OK'
 
 
 @APP.route('/sessions', methods = ['POST'])
 def login():
+    """ authenticates a given user """
     data = request.get_json()
 
     # fake implementation
     # TODO query Taiga API
-    if (data is None
-        or 'username' not in data
-        or data['username'] != 'test-user'
-        or 'password' not in data
-        or data['password'] != 'test-password'):
-
-        return make_invalid_credentials_response()
+    # and put Token in DB, with an expiration timestamp
+    if not are_valid_credentials(data):
+        return authenticate()
 
     response = jsonify(
         username="test-user",
         full_display_name="TEST USER",
         auth_token="TEST_AUTH_TOKEN"
     )
-    return response
-
-def make_invalid_credentials_response():
-    response = jsonify(message ="BAD CREDENTIALS")
-    response.status_code = 401
     return response
 
 import project_endpoints
