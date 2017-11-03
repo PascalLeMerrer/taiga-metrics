@@ -71,3 +71,30 @@ def _get_fake_project3():
           ]
         }
         )
+
+@APP.route('/projects/<id>', methods = ['PATCH'])
+@requires_authentication
+def patch_project(id):
+    """ returns project details """
+    # TODO replace fake implementation
+    response = _get_updated_fake_project3()
+    response.status_code = 200
+    return response
+
+
+def _get_updated_fake_project3():
+    # TODO remove after implementation of get_project()
+    return jsonify(project =
+        { "name": "project3",
+          "id": 3,
+          "work_start_status_id": 2,
+          "work_end_status_id": 3,
+          "statuses": [
+            { "id": 1, "name": "Idea"  },
+            { "id": 2, "name": "Think" },
+            { "id": 3, "name": "Build" },
+            { "id": 4, "name": "Run"   },
+            { "id": 5, "name": "Done"  }
+          ]
+        }
+        )
