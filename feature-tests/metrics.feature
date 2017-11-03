@@ -6,7 +6,6 @@
   Background: Set target server address and headers
     Given I am using server "$SERVER"
 
-  @wip
   Scenario: User can list its Taiga projects
     Given I authenticate as test user
     When I make a GET request to "/projects"
