@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import APP
-from auth import are_valid_credentials
+from auth import are_valid_credentials, authenticate
 
 @APP.route('/sessions', methods = ['POST'])
 def login():
