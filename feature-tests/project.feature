@@ -5,16 +5,17 @@
   Background: Set target server address and headers
     Given I am using server "$SERVER"
 
-
+  @project
   Scenario: Non authenticated used cannot access projects
     When I make a GET request to "/projects"
     Then the response status should be 401
 
+  @project
   Scenario: Non authenticated used cannot access project
     When I make a GET request to "/projects/2"
     Then the response status should be 401
 
-
+  @project
   Scenario: User can list its Taiga projects
     Given I authenticate as test user
     When I make a GET request to "/projects"
@@ -40,6 +41,7 @@
     }
     """
 
+  @project
   Scenario: User can get a given Taiga project's properties
     Given I authenticate as test user
     When I make a GET request to "/projects/2"
@@ -63,6 +65,7 @@
     """
 
   @wip
+  @project
   Scenario: User can update a Taiga project preferences
     Given I authenticate as test user
     When I make a PATCH request to "/projects/1"
@@ -90,6 +93,7 @@
     }
     """
 
+  @project
   Scenario: User can activate metrics on a Taiga project
     Given I authenticate as test user
     When I make a GET request to "/projects/3"

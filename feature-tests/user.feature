@@ -9,7 +9,7 @@ Feature: user
     And I set template variable "USERNAME" to "$USERNAME"
     And I set template variable "PASSWORD" to "$PASSWORD"
 
-
+  @user
   Scenario: Test Login With Wrong Password should fail
     When I make a POST request to "/sessions"
     """
@@ -20,7 +20,7 @@ Feature: user
     """
     Then the response status should be 401
 
-
+  @user
   Scenario: Test Login With Wrong Username should fail
     When I make a POST request to "/sessions"
     """
@@ -31,6 +31,7 @@ Feature: user
     """
     Then the response status should be 401
 
+  @user
   Scenario: User can authenticate using its Taiga credentials
     When I make a POST request to "/sessions"
     """
@@ -49,7 +50,7 @@ Feature: user
     }
     """
 
-
+  @user
   Scenario: User can authenticate using its Taiga credentials
     When I make a POST request to "/sessions"
     """
