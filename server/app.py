@@ -3,7 +3,7 @@ import sys
 
 from time import sleep
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +12,7 @@ from auth import are_valid_credentials, authenticate, requires_authentication
 
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
-APP = Flask(__name__)
+APP = Flask(__name__, static_folder='static', static_url_path='')
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -25,6 +25,7 @@ DATABASE_URI = "postgresql+psycopg2://{}:{}@{}/{}".format (
 APP.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 
 DB = SQLAlchemy(APP)
+
 
 from models import ProjectConfig
 
@@ -46,12 +47,6 @@ while db_is_not_connected:
 migrate = Migrate(APP, DB)
 
 
-
-@APP.route('/')
-def index():
-    return 'Hello, World!'
-
-
 # example of insertion in DB - MUST be removed
 @APP.route('/insert', methods = ['POST'])
 @requires_authentication
@@ -60,6 +55,11 @@ def insert():
     DB.session.add(project_config)
     DB.session.commit()
     return "{ \"msg\" : \"ProjectConfig inserted!\" }"
+
+
+@APP.route('/')
+def index():
+    return send_from_directory(APP.static_folder, "index.html")
 
 
 @APP.route('/isalive', methods = ['GET'])

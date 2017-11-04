@@ -24,6 +24,14 @@ connection = psycopg2.connect(connection_parameters)
 cursor = connection.cursor()
 
 
+@then(u'the response should contain')
+@dereference_step_parameters_and_data
+def response_should_contain(context):
+    expected = context.data
+    real = context.response.content
+    return expected in real
+
+
 @behave.given('I set template variable "{variable}" to "{value}"')
 @dereference_step_parameters_and_data
 def store_for_template(context, value, variable):
