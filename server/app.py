@@ -12,7 +12,7 @@ from auth import are_valid_credentials, authenticate, requires_authentication
 
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
-APP = Flask(__name__, static_folder='static', static_url_path='')
+APP = Flask(__name__)
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -55,11 +55,6 @@ def insert():
     DB.session.add(project_config)
     DB.session.commit()
     return "{ \"msg\" : \"ProjectConfig inserted!\" }"
-
-
-@APP.route('/')
-def index():
-    return send_from_directory(APP.static_folder, "index.html")
 
 
 @APP.route('/isalive', methods = ['GET'])

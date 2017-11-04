@@ -1,5 +1,17 @@
 version: "3"
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile-front-end
+    volumes:
+      - ./front-end:/usr/src/app
+    ports:
+      - 80:8080
+    depends_on:
+      - server
+
   server:
     container_name: server
     build:
@@ -46,3 +58,4 @@ services:
       POSTGRES_DB:
       POSTGRES_USER:
       POSTGRES_PASSWORD:
+    tty: true
