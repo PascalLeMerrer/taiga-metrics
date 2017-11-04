@@ -65,10 +65,9 @@
   @wip
   Scenario: User can update a Taiga project preferences
     Given I authenticate as test user
-    When I make a PUT request to "/projects/1"
+    When I make a PATCH request to "/projects/1"
     """
-        { "name": "project1",
-          "work_start_status_id": 1
+        { "work_start_status_id": 1
           "work_end_status_id": 4
         }
     """
