@@ -1,6 +1,6 @@
-  Feature: user
+  Feature: project
   As a Taiga user
-  I can get metrics on my Taiga projects
+  I can configure my Taiga projects for getting metrics
 
   Background: Set target server address and headers
     Given I am using server "$SERVER"
