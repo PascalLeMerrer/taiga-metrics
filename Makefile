@@ -13,8 +13,8 @@ logs:	## 	 Display server logs
 	@echo -e "\033[35m > Display server logs \033[0m"
 	docker container logs server
 
-kill:
-kill:	## 	 Stops all containers, then destroy them
+clean:
+clean:	## 	 Stops all containers, then destroy them
 	@echo -e "\033[35m > Stop and destroy containers \033[0m"
 	docker-compose kill
 	docker container prune --force
