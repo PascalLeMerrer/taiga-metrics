@@ -13,10 +13,5 @@ done
 >&2 echo "server is up - starting tests"
 
 tags="--tags=-wip"
-if [ $1 ]
-then
- tags=" --tags="
- tags+=$1
-fi
 
-behave $tags --no-skipped --no-logcapture --quiet
+behave $tags --no-skipped --quiet
