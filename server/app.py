@@ -7,12 +7,14 @@ from flask import Flask, jsonify, request, send_from_directory
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 from auth import are_valid_credentials, authenticate, requires_authentication
 
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
 APP = Flask(__name__)
+CORS(APP)
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
