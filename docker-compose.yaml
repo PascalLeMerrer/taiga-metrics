@@ -9,6 +9,7 @@ services:
       - ./front-end:/usr/src/app
     ports:
       - 80:8080
+      - 41141:41141
     depends_on:
       - server
 
