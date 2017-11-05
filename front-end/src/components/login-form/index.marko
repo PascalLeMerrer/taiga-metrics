@@ -1,0 +1,12 @@
+div
+    input key="login" type="text" placeholder="Taiga username"
+
+div
+    input key="password" type="password" placeholder="Taiga password"
+
+input type="submit" value="Sign-in" on-click('login')
+
+div
+    -- ${state.authToken}
+div
+    -- ${state.error}
