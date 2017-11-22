@@ -1,17 +1,5 @@
 version: "3"
 services:
-  frontend:
-    container_name: frontend
-    build:
-      context: ./front-end
-      dockerfile: Dockerfile-front-end
-    volumes:
-      - ./front-end:/usr/src/app
-    ports:
-      - 80:8080
-      - 41141:41141
-    depends_on:
-      - server
 
   server:
     container_name: server

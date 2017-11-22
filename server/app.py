@@ -13,7 +13,7 @@ from auth import are_valid_credentials, authenticate, requires_authentication
 
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
-APP = Flask(__name__)
+APP = Flask(__name__, static_folder='public', static_url_path='/public')
 CORS(APP)
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -48,6 +48,11 @@ while db_is_not_connected:
 
 migrate = Migrate(APP, DB)
 
+@APP.route('/')
+def index():
+    print("index")
+    return send_from_directory(APP.static_folder, "index.html")
+
 
 # example of insertion in DB - MUST be removed
 @APP.route('/insert', methods = ['POST'])
@@ -68,6 +73,7 @@ import connection_endpoints
 import project_endpoints
 
 if __name__ == '__main__':
+    print(f'serving static content from {APP.static_folder}')
     # activate hot reloading
     APP.debug = True
     APP.run()

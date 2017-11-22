@@ -6,7 +6,7 @@ help:           ## Show this help.
 run:
 run:	## 	 Build and start servers and DB containers
 	@echo -e "\033[35m > Run all \033[0m"
-	docker-compose build && docker-compose up frontend
+	docker-compose build server db && docker-compose up server
 
 logs:
 logs:	## 	 Display server logs
@@ -29,6 +29,12 @@ db_shell: 	## Open Postgres console (PSQL)
 	@echo -e "\033[7;34m > Open database shell   \033[0m"
 	docker exec -it db psql --user taigametrics --password taigametrics
 
+##----- Client ------
+
+client:		## Compiles the client
+	@echo -e "\033[7;34m > Compiles the Elm app to JS  \033[0m"
+	elm make client/TaigaMetrics.elm --output server/public/taigametrics.js
+
 ##------ Tests ------
 
 test:
@@ -41,3 +47,4 @@ feature:	## Run feature tests only, assuming the backend is up and running
 	@echo -e "\033[35m > Run all \033[0m"
 	docker-compose up test
 
+.PHONY: client
