@@ -3,17 +3,17 @@
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-run:
+install:	## Install dev environment
+	npm install
+
 run:	## 	 Build and start servers and DB containers
 	@echo -e "\033[35m > Run all \033[0m"
 	docker-compose build server db && docker-compose up server
 
-logs:
 logs:	## 	 Display server logs
 	@echo -e "\033[35m > Display server logs \033[0m"
 	docker container logs server
 
-clean:
 clean:	## 	 Stops all containers, then destroy them
 	@echo -e "\033[35m > Stop and destroy containers \033[0m"
 	docker-compose kill
@@ -33,18 +33,23 @@ db_shell: 	## Open Postgres console (PSQL)
 
 client:		## Compiles the client
 	@echo -e "\033[7;34m > Compiles the Elm app to JS  \033[0m"
-	elm make client/TaigaMetrics.elm --output server/public/taigametrics.js
+	elm make client/*.elm --output server/public/js/taigametrics.js --debug
+
+##----- Simulator ------
+
+simulator:	## Simulates Taiga API
+	@echo -e "\033[7;34m > Start Taiga API Simulator based on db.json  \033[0m"
+	cd simulator && node taigaApiSimulator.js
+
 
 ##------ Tests ------
 
-test:
 test:	## 	 Run all and test
 	@echo -e "\033[35m > Run all \033[0m"
 	docker-compose build && docker-compose up
 
-feature:
 feature:	## Run feature tests only, assuming the backend is up and running
 	@echo -e "\033[35m > Run all \033[0m"
 	docker-compose up test
 
-.PHONY: client
+.PHONY: client simulator

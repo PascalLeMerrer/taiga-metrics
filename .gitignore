@@ -3,3 +3,6 @@
 *.pyc
 
 elm-stuff
+node_modules
+
+taigametrics.js

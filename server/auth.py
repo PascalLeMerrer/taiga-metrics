@@ -5,9 +5,10 @@ from functools import wraps
 AUTH_HEADER = "Authorization"
 
 def are_valid_credentials(data):
+    #TODO query taiga login API https://taigaio.github.io/taiga-doc/dist/api.html#auth-normal-login
     return data is not None \
-        and 'username' in data \
-        and data['username'] == 'test-user' \
+        and 'email' in data \
+        and data['email'] == 'test@user.com' \
         and 'password' in data \
         and data['password'] == 'test-password'
 

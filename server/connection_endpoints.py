@@ -14,6 +14,7 @@ def login():
         return authenticate()
 
     response = jsonify(
+        email="test@user.com",
         username="test-user",
         full_display_name="TEST USER",
         auth_token="TEST_AUTH_TOKEN"
