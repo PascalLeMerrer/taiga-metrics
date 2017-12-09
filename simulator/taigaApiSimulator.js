@@ -60,5 +60,5 @@ function areTestUserCredentials(credentials) {
 // Use default router
 server.use(router)
 server.listen(3000, () => {
-    console.log('JSON Server is running')
+    console.log('JSON Server is running and listens to port 3000')
 })
