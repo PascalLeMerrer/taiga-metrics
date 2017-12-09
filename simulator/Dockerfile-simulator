@@ -1,0 +1,13 @@
+FROM node:8-slim
+
+WORKDIR usr/src/app
+
+RUN npm install json-server
+
+COPY taigaApiSimulator.js .
+COPY routes.json .
+COPY db.json .
+
+EXPOSE 3000
+
+CMD ["node", "taigaApiSimulator.js"]

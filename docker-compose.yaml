@@ -12,6 +12,7 @@ services:
       - 4000:5000
     depends_on:
       - db
+      - simulator
     environment:
       POSTGRES_HOST: db
       # Postgres will create the DB with this name and user if needed
@@ -19,6 +20,7 @@ services:
       # The next values will be read from .env file
       POSTGRES_USER:
       POSTGRES_PASSWORD:
+      TAIGA_API_URL:
 
   db:
     container_name: db
@@ -31,6 +33,14 @@ services:
       # The next values will be read from .env file
       POSTGRES_USER:
       POSTGRES_PASSWORD:
+
+  simulator:
+    container_name: simulator
+    build:
+      context: ./simulator
+      dockerfile: Dockerfile-simulator
+    ports:
+      - 127.0.0.1:3000:3000
 
   test:
     container_name: test

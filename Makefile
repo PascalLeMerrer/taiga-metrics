@@ -39,14 +39,14 @@ client:		## Compiles the client
 
 simulator:	## Simulates Taiga API
 	@echo -e "\033[7;34m > Start Taiga API Simulator based on db.json  \033[0m"
-	cd simulator && node taigaApiSimulator.js
+	docker-compose up simulator
 
 
 ##------ Tests ------
 
 test:	## 	 Run all and test
 	@echo -e "\033[35m > Run all \033[0m"
-	docker-compose build && docker-compose up
+	docker-compose build && docker-compose up --abort-on-container-exit
 
 feature:	## Run feature tests only, assuming the backend is up and running
 	@echo -e "\033[35m > Run all \033[0m"
