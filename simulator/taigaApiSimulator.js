@@ -26,8 +26,8 @@ const userAuthenticationDetails = {
     "bio": "",
     "color": "#b5f04f",
     "email": "test@user.com",
-    "full_name": "test",
-    "full_name_display": "Test User",
+    "full_name": "test-username",
+    "full_name_display": "TEST USER",
     "gravatar_id": "1ec29e4d0732b571e9a975e258a7e9b5",
     "id": 16,
     "is_active": true,
@@ -49,10 +49,12 @@ const userAuthenticationDetails = {
 
 
 function isLoginRequest(req) {
+    console.log("isLoginRequest")
     return req.method === 'POST' && req.url == '/api/v1/auth'
 }
 
 function areTestUserCredentials(credentials) {
+    console.log("areTestUserCredentials", credentials)
     return credentials.username == 'test-username' && credentials.password == 'test-password'
 }
 

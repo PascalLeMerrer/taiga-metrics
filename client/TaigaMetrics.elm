@@ -16,7 +16,7 @@ initialModel : Model
 initialModel =
     { authenticated = False
     , authenticationFailed = False
-    , destinationUrl = "/admin/dashboard"
+    , destinationUrl = "/"
     , email = ""
     , isPasswordVisible = False
     , isWaitingConnect = False

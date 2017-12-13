@@ -11,12 +11,13 @@ from flask_cors import CORS
 
 from auth import are_valid_credentials, authenticate, requires_authentication
 
+
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
-APP = Flask(__name__, static_folder='public', static_url_path='/public')
-CORS(APP)
+app = Flask(__name__, static_folder='public', static_url_path='/public')
+CORS(app)
 
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 DATABASE_URI = "postgresql+psycopg2://{}:{}@{}/{}".format (
     os.environ['POSTGRES_USER'],
@@ -24,9 +25,9 @@ DATABASE_URI = "postgresql+psycopg2://{}:{}@{}/{}".format (
     os.environ['POSTGRES_HOST'],
     os.environ['POSTGRES_DB'])
 
-APP.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 
-DB = SQLAlchemy(APP)
+db = SQLAlchemy(app)
 
 
 from models import ProjectConfig
@@ -35,36 +36,35 @@ db_is_not_connected = True
 
 while db_is_not_connected:
     try:
-        print("Checking connection to DB...")
-        DB.create_all()
-        print("Connection to DB is OK.")
+        print("Checking connection to db...")
+        db.create_all()
+        print("Connection to db is OK.")
         db_is_not_connected = False
 
     except Exception as e:
 
-        print("Connection to DB failed: {}".format (e))
+        print("Connection to db failed: {}".format (e))
         sys.stdout.flush()
         sleep(INTERVAL_BETWEEN_CONNECTION_ATTEMPTS)
 
-migrate = Migrate(APP, DB)
+migrate = Migrate(app, db)
 
-@APP.route('/')
+@app.route('/')
 def index():
-    print("index")
-    return send_from_directory(APP.static_folder, "index.html")
+    return send_from_directory(app.static_folder, "index.html")
 
 
-# example of insertion in DB - MUST be removed
-@APP.route('/insert', methods = ['POST'])
+# example of insertion in db - MUST be removed
+@app.route('/insert', methods = ['POST'])
 @requires_authentication
 def insert():
     project_config = ProjectConfig(666, 1, 3)
-    DB.session.add(project_config)
-    DB.session.commit()
+    db.session.add(project_config)
+    db.session.commit()
     return "{ \"msg\" : \"ProjectConfig inserted!\" }"
 
 
-@APP.route('/isalive', methods = ['GET'])
+@app.route('/isalive', methods = ['GET'])
 def is_alive():
     """ server healthcheck endpoint """
     return 'OK'
@@ -73,7 +73,7 @@ import connection_endpoints
 import project_endpoints
 
 if __name__ == '__main__':
-    print(f'serving static content from {APP.static_folder}')
+    print(f'serving static content from {app.static_folder}')
     # activate hot reloading
-    APP.debug = True
-    APP.run()
+    app.debug = True
+    app.run()

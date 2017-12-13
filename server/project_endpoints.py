@@ -1,9 +1,9 @@
 from flask import jsonify
-from app import APP
+from app import app
 from auth import requires_authentication
 
 
-@APP.route('/projects', methods = ['GET'])
+@app.route('/projects', methods = ['GET'])
 @requires_authentication
 def get_projects():
     """ returns project list """
@@ -27,7 +27,7 @@ def get_projects():
     response.status_code = 200
     return response
 
-@APP.route('/projects/<id>', methods = ['GET'])
+@app.route('/projects/<id>', methods = ['GET'])
 @requires_authentication
 def get_project(id):
     """ returns project details """
@@ -72,7 +72,7 @@ def _get_fake_project3():
         }
         )
 
-@APP.route('/projects/<id>', methods = ['PATCH'])
+@app.route('/projects/<id>', methods = ['PATCH'])
 @requires_authentication
 def patch_project(id):
     """ returns project details """

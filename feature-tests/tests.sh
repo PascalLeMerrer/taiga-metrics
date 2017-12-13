@@ -15,3 +15,4 @@ done
 tags="--tags=-wip"
 
 behave $tags --no-skipped --quiet
+#--no-color

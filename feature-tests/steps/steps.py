@@ -98,7 +98,7 @@ def authenticate_as_test_user(context):
         When I make a POST request to "/sessions"
         """
         {
-          "username": "test-user",
+          "username": "test-username",
           "password": "test-password"
         }
         """

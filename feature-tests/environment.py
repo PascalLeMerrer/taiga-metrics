@@ -3,8 +3,7 @@ from behave_http.environment import before_scenario
 
 default_env = {
     'SERVER': 'http://server:5000',
-    'FRONT_END': 'http://frontend:8080',
-    'USERNAME': 'test-user',
+    'USERNAME': 'test-username',
     'PASSWORD': 'test-password'
 }
 
