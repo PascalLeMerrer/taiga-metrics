@@ -9,4 +9,5 @@ def login():
         response = jsonify(message ="Unauthorized")
         response.status_code = 401
         return response
-    return response
+    response = jsonify(user_profile)
+    return response, 201

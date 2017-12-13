@@ -40,7 +40,7 @@ Feature: user
       "password": "{{PASSWORD}}"
     }
     """
-    Then the response status should be 200
+    Then the response status should be 201
     And the JSON at path "auth_token" should match "\w"
     And the JSON should contain
     """

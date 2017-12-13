@@ -25,16 +25,6 @@
       "total_private_projects": 0,
       "total_public_projects": 0,
       "username": "test-username"
-    },
-    {
-      "username": "test-user",
-      "password": "test-password",
-      "id": 17
-    },
-    {
-      "username": "test-username",
-      "password": "test-password",
-      "id": 18
     }
   ]
 }

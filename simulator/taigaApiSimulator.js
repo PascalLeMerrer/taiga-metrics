@@ -19,14 +19,13 @@ server.use((req, res, next) => {
     }
 })
 
-
 const userAuthenticationDetails = {
     "auth_token": "eyJ1c2VyX2F1dGhlbnRpY2F0aW9uX2lkIjoxNn0:1dQERV:gMlrZm2vzmC6lRtSqOx0HTUyGGU",
     "big_photo": null,
     "bio": "",
     "color": "#b5f04f",
     "email": "test@user.com",
-    "full_name": "test-username",
+    "full_name": "test-user",
     "full_name_display": "TEST USER",
     "gravatar_id": "1ec29e4d0732b571e9a975e258a7e9b5",
     "id": 16,
@@ -46,6 +45,7 @@ const userAuthenticationDetails = {
     "total_public_projects": 0,
     "username": "test-username"
 }
+
 
 
 function isLoginRequest(req) {
