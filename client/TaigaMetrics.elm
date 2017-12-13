@@ -17,7 +17,7 @@ initialModel =
     { authenticated = False
     , authenticationFailed = False
     , destinationUrl = "/"
-    , email = ""
+    , username = ""
     , isPasswordVisible = False
     , isWaitingConnect = False
     , password = ""
@@ -33,8 +33,8 @@ update msg model =
 updateConnectionForm : Msg -> Model -> ( Model, Cmd Msg )
 updateConnectionForm msg model =
     case msg of
-        ChangeEmail login ->
-            ( { model | email = login }, Cmd.none )
+        ChangeUsername login ->
+            ( { model | username = login }, Cmd.none )
 
         ChangePassword pass ->
             ( { model | password = pass }, Cmd.none )
@@ -91,7 +91,7 @@ connect model =
         body =
             Http.jsonBody <|
                 Json.Encode.object
-                    [ ( "email", Json.Encode.string model.email )
+                    [ ( "username", Json.Encode.string model.username )
                     , ( "password", Json.Encode.string model.password )
                     ]
 
@@ -152,16 +152,12 @@ viewInputField content =
 
 viewEmailField : Model -> ( String, List (Html Msg) )
 viewEmailField model =
-    ( "Adresse email"
+    ( "Nom d'utilisateur"
     , [ input
-            [ type_ "email"
-            , class <| viewInputFieldStyle model
-            , onInput ChangeEmail
+            [ class <| viewInputFieldStyle model
+            , onInput ChangeUsername
             ]
             []
-      , span [ class "icon is-small is-left" ]
-            [ i [ class "fa fa-envelope" ] []
-            ]
       ]
     )
 
@@ -239,7 +235,7 @@ messages : Messages
 messages =
     { authenticationFailed =
         { title = "La connexion a échoué"
-        , body = "Cette combinaison email / mot de passe est erronée."
+        , body = "Cette combinaison nom d'utilisateur / mot de passe est erronée."
         }
     , serverError =
         { title = "Une erreur est survenue"

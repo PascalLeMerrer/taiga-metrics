@@ -7,7 +7,7 @@ type Msg
     = CloseMessage
     | Login
     | Logged (Result Http.Error User)
-    | ChangeEmail String
+    | ChangeUsername String
     | ChangePassword String
     | TogglePasswordVisibility Bool
 
@@ -16,7 +16,7 @@ type alias Model =
     { authenticated : Bool
     , authenticationFailed : Bool
     , destinationUrl : String
-    , email : String
+    , username : String
     , isPasswordVisible : Bool
     , isWaitingConnect : Bool
     , password : String
