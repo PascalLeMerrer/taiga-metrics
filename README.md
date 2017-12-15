@@ -30,9 +30,10 @@ Clone the code, then run all tests:
 make test
 ```
 
-If all tests pass you can run the server:
+If all tests pass you can build the client and run the server:
 
 ```
+make client
 make run
 ```
 
