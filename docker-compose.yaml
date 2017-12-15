@@ -37,7 +37,7 @@ services:
   simulator:
     container_name: simulator
     build:
-      context: ./simulator
+      context: ./api_simulator
       dockerfile: Dockerfile-simulator
     ports:
       - 127.0.0.1:3000:3000
