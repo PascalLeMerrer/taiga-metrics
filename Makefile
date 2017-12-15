@@ -3,9 +3,6 @@
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-install:	## Install dev environment
-	npm install
-
 run:	## 	 Build and start servers and DB containers
 	@echo -e "\033[35m > Run all \033[0m"
 	docker-compose build server db && docker-compose up server
