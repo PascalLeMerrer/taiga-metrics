@@ -9,8 +9,6 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-from auth import are_valid_credentials, authenticate, requires_authentication
-
 
 INTERVAL_BETWEEN_CONNECTION_ATTEMPTS = 5 # seconds
 
@@ -52,16 +50,6 @@ migrate = Migrate(app, db)
 @app.route('/')
 def index():
     return send_from_directory(app.static_folder, "index.html")
-
-
-# example of insertion in db - MUST be removed
-@app.route('/insert', methods = ['POST'])
-@requires_authentication
-def insert():
-    project_config = ProjectConfig(666, 1, 3)
-    db.session.add(project_config)
-    db.session.commit()
-    return "{ \"msg\" : \"ProjectConfig inserted!\" }"
 
 
 @app.route('/isalive', methods = ['GET'])

@@ -2,12 +2,13 @@ Feature: user
   As a Taiga user
   I can connect to Taiga metrics
 
-  Background: Set target server address and headers
+  Background: Set target server address and headers, reset DB
     Given I am using server "$SERVER"
     And I set "Accept" header to "application/json"
     And I set "Content-Type" header to "application/json"
     And I set template variable "USERNAME" to "$USERNAME"
     And I set template variable "PASSWORD" to "$PASSWORD"
+    Then I reset the database content
 
   @user
   Scenario: Test Login With Wrong Password should fail
@@ -49,3 +50,5 @@ Feature: user
       "full_display_name": "TEST USER"
     }
     """
+    Then I set the header "Authorization" to the JSON value at path "auth_token"
+    And I disconnect myself

@@ -1,14 +1,18 @@
 from flask import jsonify, request
 from functools import wraps
 
+from datetime import datetime, timedelta
 import requests
 import os
 import logging
 import json
-import sys
+
+from app import db
+from models import UserSession
 
 logger = logging.getLogger('auth')
 
+SESSION_DURATION = timedelta(days=1)
 AUTH_HEADER = "Authorization"
 API_URL = os.getenv("TAIGA_API_URL", 'https://api.taiga.io/api/v1')
 
@@ -24,6 +28,8 @@ def authenticate(data):
     user_profile = _delegate_authentication(data['username'], data['password'])
     if not user_profile:
         return False
+
+    _save_token(user_profile)
 
     return {
           "username": user_profile['username'],
@@ -52,10 +58,20 @@ def _delegate_authentication(username, password):
     return decoded_response
 
 
+def _save_token(user_profile):
+    user_session = UserSession(user_profile['id'],
+        user_profile['auth_token'],
+        datetime.utcnow() + SESSION_DURATION)
+    db.session.add(user_session)
+    db.session.commit()
+
+
 def requires_authentication(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        """ Verifies the Authorisation header contains a valid token """
+        """ Verifies the Authorisation header contains a valid token
+            and updates its duration
+        """
         if AUTH_HEADER not in request.headers:
             return 'Unauthorized', 401
 
@@ -69,5 +85,19 @@ def requires_authentication(f):
 
 
 def _is_valid_token(token):
-    # TODO verify token is in DB and is not expired
+    """verifies token is in DB and is not expired
+       and updates its expiration date if required
+    """
+    user_session = UserSession.query.get(token)
+    if user_session is None:
+        return False
+    if user_session.expiration_date < datetime.utcnow():
+        return False
+    user_session.expiration_date = datetime.utcnow() + SESSION_DURATION
+    db.session.commit()
     return True
+
+
+def logout(token):
+    UserSession.query.filter(UserSession.token == token).delete()
+    db.session.commit()

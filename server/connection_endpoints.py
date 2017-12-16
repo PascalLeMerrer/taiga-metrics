@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app
-from auth import are_valid_credentials, authenticate
+from auth import requires_authentication, authenticate, logout, AUTH_HEADER
 
 @app.route('/sessions', methods = ['POST'])
 def login():
@@ -11,3 +11,10 @@ def login():
         return response
     response = jsonify(user_profile)
     return response, 201
+
+@app.route('/sessions', methods = ['DELETE'])
+@requires_authentication
+def kill_session():
+    token = request.headers[AUTH_HEADER]
+    logout(token)
+    return "", 204

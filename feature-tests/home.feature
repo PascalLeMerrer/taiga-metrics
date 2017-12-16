@@ -4,7 +4,6 @@ Feature: server responses
 
   Background: Set target server address and headers
     Given I am using server "$SERVER"
-    And I reset the database content
 
   Scenario: Test homepage is accessible
     Given I set "Accept" header to "text/html"
