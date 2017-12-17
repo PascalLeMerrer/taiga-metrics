@@ -15,13 +15,11 @@ type Msg
 
 type alias Model =
     { authenticated : Bool
-    , authenticationFailed : Bool
     , destinationUrl : String
     , username : String
     , user : WebData User
     , isPasswordVisible : Bool
     , password : String
-    , serverError : Bool
     }
 
 

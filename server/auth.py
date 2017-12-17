@@ -34,7 +34,6 @@ def authenticate(data):
 
     return {
           "auth_token": user_profile['auth_token'],
-          #"email": user_profile['email'],
           "full_display_name": user_profile['full_name_display'],
           "username": user_profile['username']
     }

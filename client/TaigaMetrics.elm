@@ -17,13 +17,11 @@ import Utils exposing (classes)
 initialModel : Model
 initialModel =
     { authenticated = False
-    , authenticationFailed = False
     , destinationUrl = "/"
     , username = ""
     , user = NotAsked
     , isPasswordVisible = False
     , password = ""
-    , serverError = False
     }
 
 
@@ -123,7 +121,7 @@ viewUsernameField : Model -> ( String, List (Html Msg) )
 viewUsernameField model =
     ( "Nom d'utilisateur"
     , [ input
-            [ class <| viewInputFieldStyle model
+            [ class "input"
             , onInput ChangeUsername
             ]
             []
@@ -135,7 +133,7 @@ viewPasswordField : Model -> ( String, List (Html Msg) )
 viewPasswordField model =
     ( "Mot de passe"
     , [ input
-            [ class <| viewInputFieldStyle model
+            [ class "input"
             , type_ <| viewPasswordType model
             , onInput ChangePassword
             ]
@@ -145,14 +143,6 @@ viewPasswordField model =
             ]
       ]
     )
-
-
-viewInputFieldStyle : Model -> String
-viewInputFieldStyle model =
-    if model.authenticationFailed then
-        "input is-danger"
-    else
-        "input"
 
 
 viewVisibilityCheckbox : Model -> Html Msg
