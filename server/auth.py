@@ -32,9 +32,10 @@ def authenticate(data):
     _save_token(user_profile)
 
     return {
-          "username": user_profile['username'],
+          "auth_token": user_profile['auth_token'],
+          #"email": user_profile['email'],
           "full_display_name": user_profile['full_name_display'],
-          "auth_token": user_profile['auth_token']
+          "username": user_profile['username']
     }
 
 

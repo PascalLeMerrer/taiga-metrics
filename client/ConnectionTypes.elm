@@ -1,12 +1,13 @@
 module ConnectionTypes exposing (..)
 
 import Http
+import RemoteData exposing (WebData)
 
 
 type Msg
     = CloseMessage
     | Login
-    | Logged (Result Http.Error User)
+    | HandleLoginResponse (WebData User)
     | ChangeUsername String
     | ChangePassword String
     | TogglePasswordVisibility Bool
@@ -17,16 +18,15 @@ type alias Model =
     , authenticationFailed : Bool
     , destinationUrl : String
     , username : String
+    , user : WebData User
     , isPasswordVisible : Bool
-    , isWaitingConnect : Bool
     , password : String
     , serverError : Bool
     }
 
 
 type alias User =
-    { email : String
-    , username : String
+    { username : String
     , full_display_name : String
     , auth_token : String
     }

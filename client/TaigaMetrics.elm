@@ -9,6 +9,8 @@ import Json.Decode exposing (bool, decodeString, Decoder, string)
 import Json.Decode.Pipeline as Pipeline exposing (decode, required)
 import Json.Encode exposing (object, string)
 import Navigation
+import RemoteData exposing (RemoteData(..), WebData)
+import RemoteData.Http exposing (post)
 import Utils exposing (classes)
 
 
@@ -18,8 +20,8 @@ initialModel =
     , authenticationFailed = False
     , destinationUrl = "/"
     , username = ""
+    , user = NotAsked
     , isPasswordVisible = False
-    , isWaitingConnect = False
     , password = ""
     , serverError = False
     }
@@ -40,41 +42,19 @@ updateConnectionForm msg model =
             ( { model | password = pass }, Cmd.none )
 
         CloseMessage ->
-            ( { model
-                | authenticationFailed = False
-                , serverError = False
-              }
-            , Cmd.none
-            )
+            ( { model | user = NotAsked }, Cmd.none )
 
-        Logged (Err httpError) ->
-            let
-                authenticationFailed =
-                    case httpError of
-                        Http.BadStatus response ->
-                            response.status.code < 500
+        HandleLoginResponse NotAsked ->
+            ( { model | user = NotAsked }, Cmd.none )
 
-                        _ ->
-                            False
+        HandleLoginResponse Loading ->
+            ( model, Cmd.none )
 
-                serverError =
-                    not authenticationFailed
-            in
-                ( { model
-                    | authenticationFailed = authenticationFailed
-                    , isWaitingConnect = False
-                    , serverError = serverError
-                  }
-                , Cmd.none
-                )
+        HandleLoginResponse (Failure httpError) ->
+            ( { model | user = Failure httpError }, Cmd.none )
 
-        Logged (Ok user) ->
-            ( { model
-                | authenticated = True
-                , authenticationFailed = False
-                , isWaitingConnect = False
-                , serverError = False
-              }
+        HandleLoginResponse (Success user) ->
+            ( { model | authenticated = True, user = Success user }
             , Navigation.load model.destinationUrl
             )
 
@@ -89,30 +69,19 @@ connect : Model -> ( Model, Cmd Msg )
 connect model =
     let
         body =
-            Http.jsonBody <|
-                Json.Encode.object
-                    [ ( "username", Json.Encode.string model.username )
-                    , ( "password", Json.Encode.string model.password )
-                    ]
-
-        updatedModel =
-            { model
-                | isWaitingConnect = True
-                , authenticationFailed = False
-                , serverError = False
-            }
+            Json.Encode.object
+                [ ( "username", Json.Encode.string model.username )
+                , ( "password", Json.Encode.string model.password )
+                ]
     in
-        ( updatedModel
-        , userDecoder
-            |> Http.post "/sessions" body
-            |> Http.send Logged
+        ( { model | user = Loading }
+        , post "/sessions" HandleLoginResponse userDecoder body
         )
 
 
 userDecoder : Decoder User
 userDecoder =
     decode User
-        |> Pipeline.required "email" Json.Decode.string
         |> Pipeline.required "username" Json.Decode.string
         |> Pipeline.required "full_display_name" Json.Decode.string
         |> Pipeline.required "auth_token" Json.Decode.string
@@ -123,7 +92,7 @@ view model =
     div []
         [ viewColumns <|
             Html.form [ onSubmit Login ]
-                [ viewInputField <| viewEmailField model
+                [ viewInputField <| viewUsernameField model
                 , viewInputField <| viewPasswordField model
                 , viewVisibilityCheckbox model
                 , viewLoginButton model
@@ -150,8 +119,8 @@ viewInputField content =
         ]
 
 
-viewEmailField : Model -> ( String, List (Html Msg) )
-viewEmailField model =
+viewUsernameField : Model -> ( String, List (Html Msg) )
+viewUsernameField model =
     ( "Nom d'utilisateur"
     , [ input
             [ class <| viewInputFieldStyle model
@@ -207,7 +176,7 @@ viewLoginButton model =
         loginButtonClass =
             [ "button"
             , "is-primary"
-            , if model.isWaitingConnect then
+            , if model.user == Loading then
                 "is-loading"
               else
                 ""
@@ -253,15 +222,18 @@ viewMessage model =
     let
         -- todo use a record
         message =
-            if model.authenticationFailed then
-                messages.authenticationFailed
-            else if model.serverError then
-                messages.serverError
-            else
-                messages.none
+            case model.user of
+                Failure (Http.BadStatus response) ->
+                    if response.status.code < 500 then
+                        messages.authenticationFailed
+                    else
+                        messages.serverError
+
+                _ ->
+                    messages.none
 
         hasError =
-            model.authenticationFailed || model.serverError
+            message /= messages.none
 
         hasSuccess =
             False
