@@ -6,6 +6,7 @@ import requests
 import os
 import logging
 import json
+import sqlalchemy
 
 from app import db
 from models import UserSession
@@ -60,11 +61,17 @@ def _delegate_authentication(username, password):
 
 
 def _save_token(user_profile):
+    token = user_profile['auth_token']
     user_session = UserSession(user_profile['id'],
-        user_profile['auth_token'],
+        token,
         datetime.utcnow() + SESSION_DURATION)
-    db.session.add(user_session)
-    db.session.commit()
+    try:
+        db.session.add(user_session)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError:
+        # the session is already open, just update it
+        db.session.rollback()
+        _udpate_session(token)
 
 
 def requires_authentication(f):
@@ -77,7 +84,7 @@ def requires_authentication(f):
             return 'Unauthorized', 401
 
         token = request.headers[AUTH_HEADER]
-        if _is_valid_token(token):
+        if _udpate_session(token):
             return f(*args, **kwargs)
         else:
             return 'Unauthorized', 401
@@ -85,9 +92,8 @@ def requires_authentication(f):
     return decorated
 
 
-def _is_valid_token(token):
-    """verifies token is in DB and is not expired
-       and updates its expiration date if required
+def _udpate_session(token):
+    """ returns true if the session was updated
     """
     user_session = UserSession.query.get(token)
     if user_session is None:
