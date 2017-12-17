@@ -68,7 +68,7 @@ def _save_token(user_profile):
         db.session.add(user_session)
         db.session.commit()
     except sqlalchemy.exc.IntegrityError:
-        # the session is already open, just update it
+        # a session for this token is already in DB, just update it
         db.session.rollback()
         _udpate_session(token)
 
@@ -83,16 +83,19 @@ def requires_authentication(f):
             return 'Unauthorized', 401
 
         token = request.headers[AUTH_HEADER]
-        if _udpate_session(token):
-            return f(*args, **kwargs)
-        else:
-            return 'Unauthorized', 401
+        try:
+            if _udpate_session(token):
+                return f(*args, **kwargs)
+            else:
+                return 'Unauthorized', 401
+        except:
+            return 'Server Error', 500
 
     return decorated
 
 
 def _udpate_session(token):
-    """ returns true if the session was updated
+    """ returns true if the token is valid and the session was updated
     """
     user_session = UserSession.query.get(token)
     if user_session is None:
