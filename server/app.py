@@ -34,6 +34,7 @@ db_is_not_connected = True
 
 while db_is_not_connected:
     try:
+        # TODO replace print with logs
         print("Checking connection to db...")
         db.create_all()
         print("Connection to db is OK.")

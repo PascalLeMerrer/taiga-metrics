@@ -238,6 +238,7 @@ viewMessage model =
         hasSuccess =
             False
 
+        -- no success message by now
         messageClass =
             if hasSuccess then
                 "is-success"
