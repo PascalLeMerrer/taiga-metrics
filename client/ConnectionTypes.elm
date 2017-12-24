@@ -8,6 +8,8 @@ type Msg
     = CloseMessage
     | Login
     | HandleLoginResponse (WebData User)
+    | Logout
+    | HandleLogoutResponse (WebData String)
     | ChangeUsername String
     | ChangePassword String
     | TogglePasswordVisibility Bool
@@ -20,6 +22,7 @@ type alias Model =
     , user : WebData User
     , isPasswordVisible : Bool
     , password : String
+    , token : String
     }
 
 

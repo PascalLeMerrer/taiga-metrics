@@ -5,23 +5,23 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Http
-import Json.Decode exposing (bool, decodeString, Decoder, string)
+import Json.Decode exposing (bool, decodeString, Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (decode, required)
 import Json.Encode exposing (object, string)
 import Navigation
 import RemoteData exposing (RemoteData(..), WebData)
-import RemoteData.Http exposing (post)
+import RemoteData.Http exposing (post, Config, deleteWithConfig)
 import Utils exposing (classes)
 
 
 initialModel : Model
 initialModel =
     { authenticated = False
-    , destinationUrl = "/"
-    , username = ""
-    , user = NotAsked
     , isPasswordVisible = False
     , password = ""
+    , token = ""
+    , username = ""
+    , user = NotAsked
     }
 
 
@@ -42,6 +42,9 @@ updateConnectionForm msg model =
         CloseMessage ->
             ( { model | user = NotAsked }, Cmd.none )
 
+        Login ->
+            connect model
+
         HandleLoginResponse NotAsked ->
             ( { model | user = NotAsked }, Cmd.none )
 
@@ -52,12 +55,17 @@ updateConnectionForm msg model =
             ( { model | user = Failure httpError }, Cmd.none )
 
         HandleLoginResponse (Success user) ->
-            ( { model | authenticated = True, user = Success user }
+            ( { model | authenticated = True, user = Success user, token = user.auth_token }
             , Navigation.load model.destinationUrl
             )
 
-        Login ->
-            connect model
+        Logout ->
+            disconnect model
+
+        HandleLogoutResponse _ ->
+            ( { model | authenticated = False, user = NotAsked }
+            , Navigation.load model.destinationUrl
+            )
 
         TogglePasswordVisibility value ->
             ( { model | isPasswordVisible = value }, Cmd.none )
@@ -77,6 +85,24 @@ connect model =
         )
 
 
+deleteConfig : Model -> Config
+deleteConfig model =
+    { headers =
+        [ Http.header "Accept" "application/json"
+        , Http.header "Authorization" model.token
+        ]
+    , withCredentials = False
+    , timeout = Nothing
+    }
+
+
+disconnect : Model -> ( Model, Cmd Msg )
+disconnect model =
+    ( { model | user = Loading }
+    , deleteWithConfig (deleteConfig model) "/sessions" HandleLogoutResponse (string "")
+    )
+
+
 userDecoder : Decoder User
 userDecoder =
     decode User
@@ -89,12 +115,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ viewColumns <|
-            Html.form [ onSubmit Login ]
-                [ viewInputField <| viewUsernameField model
-                , viewInputField <| viewPasswordField model
-                , viewVisibilityCheckbox model
-                , viewLoginButton model
-                ]
+            viewLoginForm model
         , viewColumns <| viewMessage model
         ]
 
@@ -106,6 +127,16 @@ viewColumns centralColumContent =
         , div [ class "column" ]
             [ centralColumContent ]
         , div [ class "column" ] []
+        ]
+
+
+viewLoginForm : Model -> Html Msg
+viewLoginForm model =
+    Html.form [ onSubmit Login ]
+        [ viewInputField <| viewUsernameField model
+        , viewInputField <| viewPasswordField model
+        , viewVisibilityCheckbox model
+        , viewLoginButton model
         ]
 
 
