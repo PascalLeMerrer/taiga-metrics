@@ -30,7 +30,7 @@ db_shell: 	## Open Postgres console (PSQL)
 
 client:		## Compiles the client
 	@echo -e "\033[7;34m > Compiles the Elm app to JS  \033[0m"
-	elm make client/*.elm --output server/public/js/taigametrics.js --debug
+	elm make client/types/*.elm client/pages/*.elm client/*.elm --output server/public/js/taigametrics.js --debug
 
 ##----- Simulator ------
 

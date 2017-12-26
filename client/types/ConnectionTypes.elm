@@ -8,13 +8,13 @@ import Route exposing (Page)
 
 
 type Msg
-    = CloseMessage
-    | Login
-    | HandleLoginResponse (WebData User)
-    | Logout
-    | HandleLogoutResponse (WebData String)
+    = ChangePassword String
     | ChangeUsername String
-    | ChangePassword String
+    | CloseMessage
+    | HandleLoginResponse (WebData User)
+    | HandleLogoutResponse (WebData String)
+    | Login
+    | Logout
     | TogglePasswordVisibility Bool
     | UrlChanged Location
 
@@ -22,19 +22,19 @@ type Msg
 type alias Model =
     { authenticated : Bool
     , currentPage : Page
-    , username : String
-    , user : WebData User
     , isPasswordVisible : Bool
     , password : String
     , projects : List ProjectSummary
     , token : String
+    , user : WebData User
+    , username : String
     }
 
 
 type alias User =
-    { username : String
+    { auth_token : String
     , full_display_name : String
-    , auth_token : String
+    , username : String
     }
 
 
