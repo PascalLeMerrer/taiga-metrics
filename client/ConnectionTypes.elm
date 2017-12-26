@@ -1,7 +1,10 @@
 module ConnectionTypes exposing (..)
 
 import Http
+import Navigation exposing (Location)
+import Project exposing (..)
 import RemoteData exposing (WebData)
+import Route exposing (Page)
 
 
 type Msg
@@ -13,15 +16,17 @@ type Msg
     | ChangeUsername String
     | ChangePassword String
     | TogglePasswordVisibility Bool
+    | UrlChanged Location
 
 
 type alias Model =
     { authenticated : Bool
-    , destinationUrl : String
+    , currentPage : Page
     , username : String
     , user : WebData User
     , isPasswordVisible : Bool
     , password : String
+    , projects : List ProjectSummary
     , token : String
     }
 

@@ -1,6 +1,7 @@
 module TaigaMetrics exposing (main)
 
 import ConnectionTypes exposing (..)
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput, onSubmit)
@@ -8,21 +9,26 @@ import Http
 import Json.Decode exposing (bool, decodeString, Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (decode, required)
 import Json.Encode exposing (object, string)
-import Navigation
+import Navigation exposing (Location, program)
+import Project exposing (..)
 import RemoteData exposing (RemoteData(..), WebData)
 import RemoteData.Http exposing (post, Config, deleteWithConfig)
+import Route exposing (..)
 import Utils exposing (classes)
 
 
-initialModel : Model
-initialModel =
+init : Location -> ( Model, Cmd Msg )
+init location =
     { authenticated = False
+    , currentPage = HomePage
     , isPasswordVisible = False
     , password = ""
+    , projects = []
     , token = ""
     , username = ""
     , user = NotAsked
     }
+        |> urlUpdate location
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,20 +61,63 @@ updateConnectionForm msg model =
             ( { model | user = Failure httpError }, Cmd.none )
 
         HandleLoginResponse (Success user) ->
-            ( { model | authenticated = True, user = Success user, token = user.auth_token }
-            , Navigation.load model.destinationUrl
+            ( { model
+                | authenticated = True
+                , user = Success user
+                , token = user.auth_token
+                , currentPage = ProjectsPage []
+              }
+            , Cmd.none
             )
 
         Logout ->
             disconnect model
 
         HandleLogoutResponse _ ->
-            ( { model | authenticated = False, user = NotAsked }
-            , Navigation.load model.destinationUrl
-            )
+            ( { model | authenticated = False, user = NotAsked, currentPage = HomePage }, Cmd.none )
 
         TogglePasswordVisibility value ->
             ( { model | isPasswordVisible = value }, Cmd.none )
+
+        UrlChanged newLocation ->
+            urlUpdate newLocation model
+
+
+urlUpdate : Location -> Model -> ( Model, Cmd Msg )
+urlUpdate newLocation model =
+    case Route.parse newLocation of
+        Nothing ->
+            ( model
+              -- { model | message = "invalid URL: " ++ newLocation.hash }
+            , Route.modifyUrl model.currentPage
+            )
+
+        Just validRoute ->
+            if Route.isEqual validRoute model.currentPage then
+                ( model, Cmd.none )
+            else
+                case validRoute of
+                    Home ->
+                        ( { model | currentPage = HomePage }
+                        , Cmd.none
+                        )
+
+                    Projects ->
+                        ( { model
+                            | currentPage = ProjectsPage model.projects
+                          }
+                        , Cmd.none
+                        )
+
+                    ProjectDetail id ->
+                        ( -- { model
+                          --    | serverRequest = Just id
+                          --    , message =
+                          --        "Loading data for project: " ++ toString id
+                          -- }
+                          model
+                        , Route.modifyUrl model.currentPage
+                        )
 
 
 connect : Model -> ( Model, Cmd Msg )
@@ -115,7 +164,15 @@ view : Model -> Html Msg
 view model =
     div []
         [ viewColumns <|
-            viewLoginForm model
+            case model.currentPage of
+                HomePage ->
+                    viewLoginForm model
+
+                ProjectsPage projectSummaryList ->
+                    viewProjectList model
+
+                ProjectDetailPage projectId project ->
+                    viewProjectDetail model
         , viewColumns <| viewMessage model
         ]
 
@@ -221,6 +278,44 @@ viewPasswordType model =
         "password"
 
 
+viewLogoutButton : Model -> Html Msg
+viewLogoutButton model =
+    let
+        logoutButtonClass =
+            [ "button"
+            , if model.user == Loading then
+                "is-loading"
+              else
+                ""
+            ]
+    in
+        div [ classes [ "field has-addons-centered" ] ]
+            [ p [ class "control" ]
+                [ button
+                    [ classes logoutButtonClass
+                    , onClick Logout
+                    ]
+                    [ text "Me déconnecter" ]
+                ]
+            ]
+
+
+viewProjectList : Model -> Html Msg
+viewProjectList model =
+    div []
+        [ text "Project List"
+        , viewLogoutButton model
+        ]
+
+
+viewProjectDetail : Model -> Html Msg
+viewProjectDetail model =
+    div []
+        [ text "Project Detail"
+        , viewLogoutButton model
+        ]
+
+
 messages : Messages
 messages =
     { authenticationFailed =
@@ -279,10 +374,10 @@ viewMessage model =
             span [] []
 
 
-main : Program Never Model Msg
 main =
-    Html.program
-        { init = ( initialModel, Cmd.none )
+    Navigation.program
+        UrlChanged
+        { init = init
         , view = view
         , update = update
         , subscriptions = \_ -> Sub.none

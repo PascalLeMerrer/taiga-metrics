@@ -1,0 +1,21 @@
+module Click exposing (..)
+
+import Html.Events exposing (onWithOptions)
+import Html.Events exposing (defaultOptions)
+import Json.Decode
+
+
+onPreventDefaultClick : msg -> Attribute msg
+onPreventDefaultClick message =
+    onWithOptions
+        "click"
+        { defaultOptions | preventDefault = True }
+        (Json.Decode.succeed message)
+
+
+onClickPage : Page -> List (Attribute Msg)
+onClickPage page =
+    [ style [ ( "pointer", "cursor" ) ]
+    , href (pageToUrl page)
+    , onPreventDefaultClick (NewPage page)
+    ]
