@@ -14,16 +14,22 @@ import RemoteData.Http exposing (post, Config, deleteWithConfig)
 import Route exposing (..)
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+initialConnection : Connection
+initialConnection =
     { authenticated = False
-    , currentPage = HomePage
     , isPasswordVisible = False
     , password = ""
-    , projects = []
     , token = ""
     , username = ""
     , userStatus = NotAsked
+    }
+
+
+init : Location -> ( Model, Cmd Msg )
+init location =
+    { connection = initialConnection
+    , currentPage = HomePage
+    , projects = []
     }
         |> urlUpdate location
 
@@ -32,7 +38,11 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         CloseMessage ->
-            ( { model | userStatus = NotAsked }, Cmd.none )
+            let
+                conn =
+                    model.connection
+            in
+                ( { model | connection = { conn | userStatus = NotAsked } }, Cmd.none )
 
         ConnectionMsg connectionMsg ->
             updateConnectionForm connectionMsg model
@@ -43,43 +53,50 @@ update msg model =
 
 updateConnectionForm : ConnectionMsg -> Model -> ( Model, Cmd Msg )
 updateConnectionForm msg model =
-    case msg of
-        ChangeUsername login ->
-            ( { model | username = login }, Cmd.none )
+    let
+        conn =
+            model.connection
+    in
+        case msg of
+            ChangeUsername login ->
+                ( { model | connection = { conn | username = login } }, Cmd.none )
 
-        ChangePassword pass ->
-            ( { model | password = pass }, Cmd.none )
+            ChangePassword pass ->
+                ( { model | connection = { conn | password = pass } }, Cmd.none )
 
-        Login ->
-            connect model
+            Login ->
+                connect model
 
-        HandleLoginResponse NotAsked ->
-            ( { model | userStatus = NotAsked }, Cmd.none )
+            HandleLoginResponse NotAsked ->
+                ( { model | connection = { conn | userStatus = NotAsked } }, Cmd.none )
 
-        HandleLoginResponse Loading ->
-            ( model, Cmd.none )
+            HandleLoginResponse (Failure httpError) ->
+                ( { model | connection = { conn | userStatus = Failure httpError } }, Cmd.none )
 
-        HandleLoginResponse (Failure httpError) ->
-            ( { model | userStatus = Failure httpError }, Cmd.none )
+            HandleLoginResponse (Success user) ->
+                ( { model
+                    | connection =
+                        { conn
+                            | authenticated = True
+                            , userStatus = Success user
+                            , token = user.auth_token
+                        }
+                    , currentPage = ProjectsPage []
+                  }
+                , Cmd.none
+                )
 
-        HandleLoginResponse (Success user) ->
-            ( { model
-                | authenticated = True
-                , userStatus = Success user
-                , token = user.auth_token
-                , currentPage = ProjectsPage []
-              }
-            , Cmd.none
-            )
+            Logout ->
+                disconnect model
 
-        Logout ->
-            disconnect model
+            HandleLogoutResponse (Success _) ->
+                ( { model | connection = { conn | authenticated = False, userStatus = NotAsked }, currentPage = HomePage }, Cmd.none )
 
-        HandleLogoutResponse _ ->
-            ( { model | authenticated = False, userStatus = NotAsked, currentPage = HomePage }, Cmd.none )
+            TogglePasswordVisibility value ->
+                ( { model | connection = { conn | isPasswordVisible = value } }, Cmd.none )
 
-        TogglePasswordVisibility value ->
-            ( { model | isPasswordVisible = value }, Cmd.none )
+            _ ->
+                ( model, Cmd.none )
 
 
 urlUpdate : Location -> Model -> ( Model, Cmd Msg )
@@ -124,11 +141,14 @@ connect model =
     let
         body =
             Json.Encode.object
-                [ ( "username", Json.Encode.string model.username )
-                , ( "password", Json.Encode.string model.password )
+                [ ( "username", Json.Encode.string model.connection.username )
+                , ( "password", Json.Encode.string model.connection.password )
                 ]
+
+        conn =
+            model.connection
     in
-        ( { model | userStatus = Loading }
+        ( { model | connection = { conn | userStatus = Loading } }
         , post "/sessions" (ConnectionMsg << HandleLoginResponse) userDecoder body
         )
 
@@ -137,7 +157,7 @@ deleteConfig : Model -> Config
 deleteConfig model =
     { headers =
         [ Http.header "Accept" "application/json"
-        , Http.header "Authorization" model.token
+        , Http.header "Authorization" model.connection.token
         ]
     , withCredentials = False
     , timeout = Nothing
@@ -146,9 +166,13 @@ deleteConfig model =
 
 disconnect : Model -> ( Model, Cmd Msg )
 disconnect model =
-    ( { model | userStatus = Loading }
-    , deleteWithConfig (deleteConfig model) "/sessions" (ConnectionMsg << HandleLogoutResponse) (string "")
-    )
+    let
+        conn =
+            model.connection
+    in
+        ( { model | connection = { conn | userStatus = Loading } }
+        , deleteWithConfig (deleteConfig model) "/sessions" (ConnectionMsg << HandleLogoutResponse) (string "")
+        )
 
 
 userDecoder : Decoder User

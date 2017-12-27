@@ -60,9 +60,9 @@ messages =
 viewMessage : Model -> Html Msg
 viewMessage model =
     let
-        -- todo use a record
+        -- TODO refactor. Include message in the model?
         message =
-            case model.userStatus of
+            case model.connection.userStatus of
                 Failure (Http.BadStatus response) ->
                     if response.status.code < 500 then
                         messages.authenticationFailed

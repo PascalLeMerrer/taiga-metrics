@@ -13,7 +13,7 @@ viewLogoutButton model =
     let
         logoutButtonClass =
             [ "button"
-            , if model.userStatus == Loading then
+            , if model.connection.userStatus == Loading then
                 "is-loading"
               else
                 ""

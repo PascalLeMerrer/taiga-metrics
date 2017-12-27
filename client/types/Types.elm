@@ -24,11 +24,16 @@ type ConnectionMsg
 
 
 type alias Model =
-    { authenticated : Bool
+    { connection : Connection
     , currentPage : Page
+    , projects : List ProjectSummary
+    }
+
+
+type alias Connection =
+    { authenticated : Bool
     , isPasswordVisible : Bool
     , password : String
-    , projects : List ProjectSummary
     , token : String
     , userStatus : WebData User
     , username : String

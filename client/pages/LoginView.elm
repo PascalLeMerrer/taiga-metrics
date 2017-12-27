@@ -60,9 +60,9 @@ viewVisibilityCheckbox model =
         [ label [ class "checkbox" ]
             []
         , input
-            [ checked model.isPasswordVisible
+            [ checked model.connection.isPasswordVisible
             , type_ "checkbox"
-            , onClick <| ConnectionMsg (TogglePasswordVisibility <| not model.isPasswordVisible)
+            , onClick <| ConnectionMsg (TogglePasswordVisibility <| not model.connection.isPasswordVisible)
             ]
             []
         , text " Afficher le mot de passe"
@@ -75,7 +75,7 @@ viewLoginButton model =
         loginButtonClass =
             [ "button"
             , "is-primary"
-            , if model.userStatus == Loading then
+            , if model.connection.userStatus == Loading then
                 "is-loading"
               else
                 ""
@@ -93,7 +93,7 @@ viewLoginButton model =
 
 viewPasswordType : Model -> String
 viewPasswordType model =
-    if model.isPasswordVisible then
+    if model.connection.isPasswordVisible then
         "text"
     else
         "password"
