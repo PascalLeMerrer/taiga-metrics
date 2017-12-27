@@ -1,6 +1,6 @@
 module ProjectView exposing (viewProject)
 
-import ConnectionTypes exposing (Model, Msg)
+import Types exposing (Model, Msg)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)

@@ -1,4 +1,4 @@
-module ConnectionTypes exposing (..)
+module Types exposing (..)
 
 import Http
 import Navigation exposing (Location)
@@ -8,15 +8,19 @@ import Route exposing (Page)
 
 
 type Msg
+    = CloseMessage
+    | ConnectionMsg ConnectionMsg
+    | UrlChanged Location
+
+
+type ConnectionMsg
     = ChangePassword String
     | ChangeUsername String
-    | CloseMessage
     | HandleLoginResponse (WebData User)
     | HandleLogoutResponse (WebData String)
     | Login
     | Logout
     | TogglePasswordVisibility Bool
-    | UrlChanged Location
 
 
 type alias Model =

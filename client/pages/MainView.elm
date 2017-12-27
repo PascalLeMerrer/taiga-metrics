@@ -1,6 +1,6 @@
 module MainView exposing (..)
 
-import ConnectionTypes exposing (Model, Msg(CloseMessage), Messages)
+import Types exposing (Model, Msg(CloseMessage), Messages)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)

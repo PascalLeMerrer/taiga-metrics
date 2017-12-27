@@ -1,6 +1,6 @@
 module LogoutView exposing (viewLogoutButton)
 
-import ConnectionTypes exposing (Model, Msg(Logout))
+import Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -23,7 +23,7 @@ viewLogoutButton model =
             [ p [ class "control" ]
                 [ button
                     [ classes logoutButtonClass
-                    , onClick Logout
+                    , onClick (ConnectionMsg Logout)
                     ]
                     [ text "Me déconnecter" ]
                 ]

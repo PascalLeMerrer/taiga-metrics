@@ -1,6 +1,6 @@
 module LoginView exposing (viewLoginForm)
 
-import ConnectionTypes exposing (..)
+import Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput, onSubmit)
@@ -10,7 +10,7 @@ import ViewUtils exposing (classes)
 
 viewLoginForm : Model -> Html Msg
 viewLoginForm model =
-    Html.form [ onSubmit Login ]
+    Html.form [ onSubmit <| ConnectionMsg Login ]
         [ viewInputField <| viewUsernameField model
         , viewInputField <| viewPasswordField model
         , viewVisibilityCheckbox model
@@ -31,7 +31,7 @@ viewUsernameField model =
     ( "Nom d'utilisateur"
     , [ input
             [ class "input"
-            , onInput ChangeUsername
+            , onInput (ConnectionMsg << ChangeUsername)
             ]
             []
       ]
@@ -44,7 +44,7 @@ viewPasswordField model =
     , [ input
             [ class "input"
             , type_ <| viewPasswordType model
-            , onInput ChangePassword
+            , onInput (ConnectionMsg << ChangePassword)
             ]
             []
       , span [ class "icon is-small is-left" ]
@@ -62,7 +62,7 @@ viewVisibilityCheckbox model =
         , input
             [ checked model.isPasswordVisible
             , type_ "checkbox"
-            , onClick <| TogglePasswordVisibility <| not model.isPasswordVisible
+            , onClick <| ConnectionMsg (TogglePasswordVisibility <| not model.isPasswordVisible)
             ]
             []
         , text " Afficher le mot de passe"

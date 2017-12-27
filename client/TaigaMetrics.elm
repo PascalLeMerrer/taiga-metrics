@@ -1,7 +1,7 @@
 module TaigaMetrics exposing (main)
 
 import MainView exposing (view)
-import ConnectionTypes exposing (..)
+import Types exposing (..)
 import Dict
 import Http
 import Json.Decode exposing (bool, decodeString, Decoder)
@@ -30,10 +30,18 @@ init location =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    updateConnectionForm msg model
+    case msg of
+        CloseMessage ->
+            ( { model | user = NotAsked }, Cmd.none )
+
+        ConnectionMsg connectionMsg ->
+            updateConnectionForm connectionMsg model
+
+        UrlChanged newLocation ->
+            urlUpdate newLocation model
 
 
-updateConnectionForm : Msg -> Model -> ( Model, Cmd Msg )
+updateConnectionForm : ConnectionMsg -> Model -> ( Model, Cmd Msg )
 updateConnectionForm msg model =
     case msg of
         ChangeUsername login ->
@@ -41,9 +49,6 @@ updateConnectionForm msg model =
 
         ChangePassword pass ->
             ( { model | password = pass }, Cmd.none )
-
-        CloseMessage ->
-            ( { model | user = NotAsked }, Cmd.none )
 
         Login ->
             connect model
@@ -75,9 +80,6 @@ updateConnectionForm msg model =
 
         TogglePasswordVisibility value ->
             ( { model | isPasswordVisible = value }, Cmd.none )
-
-        UrlChanged newLocation ->
-            urlUpdate newLocation model
 
 
 urlUpdate : Location -> Model -> ( Model, Cmd Msg )
@@ -127,7 +129,7 @@ connect model =
                 ]
     in
         ( { model | user = Loading }
-        , post "/sessions" HandleLoginResponse userDecoder body
+        , post "/sessions" (ConnectionMsg << HandleLoginResponse) userDecoder body
         )
 
 
@@ -145,7 +147,7 @@ deleteConfig model =
 disconnect : Model -> ( Model, Cmd Msg )
 disconnect model =
     ( { model | user = Loading }
-    , deleteWithConfig (deleteConfig model) "/sessions" HandleLogoutResponse (string "")
+    , deleteWithConfig (deleteConfig model) "/sessions" (ConnectionMsg << HandleLogoutResponse) (string "")
     )
 
 
