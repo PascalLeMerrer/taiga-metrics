@@ -12,6 +12,7 @@ import Project exposing (..)
 import RemoteData exposing (RemoteData(..), WebData)
 import RemoteData.Http exposing (post, Config, deleteWithConfig)
 import Route exposing (..)
+import UserMessages exposing (..)
 
 
 initialConnection : Connection
@@ -30,6 +31,7 @@ init location =
     { connection = initialConnection
     , currentPage = HomePage
     , projects = []
+    , userMessage = emptyUserMessage
     }
         |> urlUpdate location
 
@@ -68,10 +70,20 @@ updateConnectionForm msg model =
                 connect model
 
             HandleLoginResponse NotAsked ->
-                ( { model | connection = { conn | userStatus = NotAsked } }, Cmd.none )
+                ( { model
+                    | connection = { conn | userStatus = NotAsked }
+                    , userMessage = emptyUserMessage
+                  }
+                , Cmd.none
+                )
 
             HandleLoginResponse (Failure httpError) ->
-                ( { model | connection = { conn | userStatus = Failure httpError } }, Cmd.none )
+                ( { model
+                    | connection = { conn | userStatus = Failure httpError }
+                    , userMessage = authenticationFailedMessage
+                  }
+                , Cmd.none
+                )
 
             HandleLoginResponse (Success user) ->
                 ( { model
@@ -90,10 +102,21 @@ updateConnectionForm msg model =
                 disconnect model
 
             HandleLogoutResponse (Success _) ->
-                ( { model | connection = { conn | authenticated = False, userStatus = NotAsked }, currentPage = HomePage }, Cmd.none )
+                ( { model
+                    | connection = { conn | authenticated = False, userStatus = NotAsked }
+                    , userMessage = emptyUserMessage
+                    , currentPage = HomePage
+                  }
+                , Cmd.none
+                )
 
             HandleLogoutResponse (Failure httpError) ->
-                ( { model | connection = { conn | userStatus = Failure httpError } }, Cmd.none )
+                ( { model
+                    | connection = { conn | userStatus = Failure httpError }
+                    , userMessage = { deconnectionErrorMessage | body = toString httpError }
+                  }
+                , Cmd.none
+                )
 
             TogglePasswordVisibility value ->
                 ( { model | connection = { conn | isPasswordVisible = value } }, Cmd.none )

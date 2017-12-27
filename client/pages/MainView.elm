@@ -1,6 +1,6 @@
 module MainView exposing (..)
 
-import Types exposing (Model, Msg(CloseMessage), Messages)
+import Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -40,59 +40,28 @@ viewColumns centralColumContent =
         ]
 
 
-messages : Messages
-messages =
-    { authenticationFailed =
-        { title = "La connexion a échoué"
-        , body = "Cette combinaison nom d'utilisateur / mot de passe est erronée."
-        }
-    , serverError =
-        { title = "Une erreur est survenue"
-        , body = "Une erreur est survenue. Veuillez vérifier votre connexion avant de tenter à nouveau. Si l'erreur persiste, veuillez utiliser le formulaire de contact du site pour nous le signaler."
-        }
-    , none =
-        { title = ""
-        , body = ""
-        }
-    }
-
-
 viewMessage : Model -> Html Msg
 viewMessage model =
     let
-        -- TODO refactor. Include message in the model?
-        message =
-            case model.connection.userStatus of
-                Failure (Http.BadStatus response) ->
-                    if response.status.code < 500 then
-                        messages.authenticationFailed
-                    else
-                        messages.serverError
-
-                _ ->
-                    messages.none
-
-        hasError =
-            message /= messages.none
-
-        hasSuccess =
-            False
-
-        -- no success message by now
         messageClass =
-            if hasSuccess then
-                "is-success"
-            else
-                "is-danger"
+            case model.userMessage.messageType of
+                SuccessMessage ->
+                    "is-success"
+
+                ErrorMessage ->
+                    "is-danger"
+
+                NoMessage ->
+                    ""
     in
-        if hasError || hasSuccess then
+        if model.userMessage.messageType == NoMessage then
+            span [] []
+        else
             article [ classes [ "message", messageClass ] ]
                 [ div [ class "message-header" ]
-                    [ p [] [ text message.title ]
+                    [ p [] [ text model.userMessage.title ]
                     , button [ class "delete", onClick CloseMessage ] []
                     ]
                 , div [ class "message-body" ]
-                    [ text message.body ]
+                    [ text model.userMessage.body ]
                 ]
-        else
-            span [] []

@@ -27,6 +27,7 @@ type alias Model =
     { connection : Connection
     , currentPage : Page
     , projects : List ProjectSummary
+    , userMessage : UserMessage
     }
 
 
@@ -47,17 +48,14 @@ type alias User =
     }
 
 
-type alias Messages =
-    { authenticationFailed :
-        { title : String
-        , body : String
-        }
-    , serverError :
-        { title : String
-        , body : String
-        }
-    , none :
-        { title : String
-        , body : String
-        }
+type alias UserMessage =
+    { body : String
+    , title : String
+    , messageType : UserMessageType
     }
+
+
+type UserMessageType
+    = SuccessMessage
+    | ErrorMessage
+    | NoMessage
