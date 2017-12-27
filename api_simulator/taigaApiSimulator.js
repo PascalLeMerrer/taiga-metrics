@@ -43,7 +43,7 @@ const userAuthenticationDetails = {
     "timezone": "",
     "total_private_projects": 0,
     "total_public_projects": 0,
-    "username": "test-username"
+    "username": "user"
 }
 
 
@@ -55,7 +55,7 @@ function isLoginRequest(req) {
 
 function areTestUserCredentials(credentials) {
     console.log("areTestUserCredentials", credentials)
-    return credentials.username == 'test-username' && credentials.password == 'test-password'
+    return credentials.username == 'user' && credentials.password == 'pass'
 }
 
 
