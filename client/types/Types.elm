@@ -30,7 +30,7 @@ type alias Model =
     , password : String
     , projects : List ProjectSummary
     , token : String
-    , user : WebData User
+    , userStatus : WebData User
     , username : String
     }
 

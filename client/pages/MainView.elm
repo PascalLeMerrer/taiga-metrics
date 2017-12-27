@@ -62,7 +62,7 @@ viewMessage model =
     let
         -- todo use a record
         message =
-            case model.user of
+            case model.userStatus of
                 Failure (Http.BadStatus response) ->
                     if response.status.code < 500 then
                         messages.authenticationFailed

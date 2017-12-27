@@ -75,7 +75,7 @@ viewLoginButton model =
         loginButtonClass =
             [ "button"
             , "is-primary"
-            , if model.user == Loading then
+            , if model.userStatus == Loading then
                 "is-loading"
               else
                 ""

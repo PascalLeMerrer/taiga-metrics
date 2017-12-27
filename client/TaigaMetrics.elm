@@ -23,7 +23,7 @@ init location =
     , projects = []
     , token = ""
     , username = ""
-    , user = NotAsked
+    , userStatus = NotAsked
     }
         |> urlUpdate location
 
@@ -32,7 +32,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         CloseMessage ->
-            ( { model | user = NotAsked }, Cmd.none )
+            ( { model | userStatus = NotAsked }, Cmd.none )
 
         ConnectionMsg connectionMsg ->
             updateConnectionForm connectionMsg model
@@ -54,18 +54,18 @@ updateConnectionForm msg model =
             connect model
 
         HandleLoginResponse NotAsked ->
-            ( { model | user = NotAsked }, Cmd.none )
+            ( { model | userStatus = NotAsked }, Cmd.none )
 
         HandleLoginResponse Loading ->
             ( model, Cmd.none )
 
         HandleLoginResponse (Failure httpError) ->
-            ( { model | user = Failure httpError }, Cmd.none )
+            ( { model | userStatus = Failure httpError }, Cmd.none )
 
         HandleLoginResponse (Success user) ->
             ( { model
                 | authenticated = True
-                , user = Success user
+                , userStatus = Success user
                 , token = user.auth_token
                 , currentPage = ProjectsPage []
               }
@@ -76,7 +76,7 @@ updateConnectionForm msg model =
             disconnect model
 
         HandleLogoutResponse _ ->
-            ( { model | authenticated = False, user = NotAsked, currentPage = HomePage }, Cmd.none )
+            ( { model | authenticated = False, userStatus = NotAsked, currentPage = HomePage }, Cmd.none )
 
         TogglePasswordVisibility value ->
             ( { model | isPasswordVisible = value }, Cmd.none )
@@ -128,7 +128,7 @@ connect model =
                 , ( "password", Json.Encode.string model.password )
                 ]
     in
-        ( { model | user = Loading }
+        ( { model | userStatus = Loading }
         , post "/sessions" (ConnectionMsg << HandleLoginResponse) userDecoder body
         )
 
@@ -146,7 +146,7 @@ deleteConfig model =
 
 disconnect : Model -> ( Model, Cmd Msg )
 disconnect model =
-    ( { model | user = Loading }
+    ( { model | userStatus = Loading }
     , deleteWithConfig (deleteConfig model) "/sessions" (ConnectionMsg << HandleLogoutResponse) (string "")
     )
 
