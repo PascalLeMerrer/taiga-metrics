@@ -92,6 +92,9 @@ updateConnectionForm msg model =
             HandleLogoutResponse (Success _) ->
                 ( { model | connection = { conn | authenticated = False, userStatus = NotAsked }, currentPage = HomePage }, Cmd.none )
 
+            HandleLogoutResponse (Failure httpError) ->
+                ( { model | connection = { conn | userStatus = Failure httpError } }, Cmd.none )
+
             TogglePasswordVisibility value ->
                 ( { model | connection = { conn | isPasswordVisible = value } }, Cmd.none )
 
@@ -178,9 +181,10 @@ disconnect model =
 userDecoder : Decoder User
 userDecoder =
     decode User
-        |> Pipeline.required "username" Json.Decode.string
-        |> Pipeline.required "full_display_name" Json.Decode.string
+        -- fields MUST be in the same order than in the JSON response
         |> Pipeline.required "auth_token" Json.Decode.string
+        |> Pipeline.required "full_display_name" Json.Decode.string
+        |> Pipeline.required "username" Json.Decode.string
 
 
 main =
