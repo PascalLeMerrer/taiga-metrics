@@ -7,6 +7,14 @@ import RemoteData exposing (WebData)
 import Route exposing (Page)
 
 
+type alias Model =
+    { connection : Connection
+    , currentPage : Page
+    , projects : List ProjectSummary
+    , userMessage : UserMessage
+    }
+
+
 type Msg
     = CloseMessage
     | ConnectionMsg ConnectionMsg
@@ -21,14 +29,6 @@ type ConnectionMsg
     | Login
     | Logout
     | TogglePasswordVisibility Bool
-
-
-type alias Model =
-    { connection : Connection
-    , currentPage : Page
-    , projects : List ProjectSummary
-    , userMessage : UserMessage
-    }
 
 
 type alias Connection =
