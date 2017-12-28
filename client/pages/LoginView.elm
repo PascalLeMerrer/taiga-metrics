@@ -45,6 +45,7 @@ viewPasswordField model =
             [ class "input"
             , type_ <| viewPasswordType model
             , onInput (ConnectionMsg << ChangePassword)
+            , value model.connection.password
             ]
             []
       , span [ class "icon is-small is-left" ]

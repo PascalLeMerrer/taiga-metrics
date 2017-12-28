@@ -21,7 +21,13 @@ connect model =
         conn =
             model.connection
     in
-        ( { model | connection = { conn | userStatus = Loading } }
+        ( { model
+            | connection =
+                { conn
+                    | userStatus = Loading
+                    , password = ""
+                }
+          }
         , post "/sessions" (ConnectionMsg << HandleLoginResponse) userDecoder body
         )
 
@@ -41,7 +47,13 @@ disconnect model =
         conn =
             model.connection
     in
-        ( { model | connection = { conn | userStatus = Loading } }
+        ( { model
+            | connection =
+                { conn
+                    | userStatus = Loading
+                    , password = ""
+                }
+          }
         , deleteWithConfig (deleteConfig model) "/sessions" (ConnectionMsg << HandleLogoutResponse) (string "")
         )
 
