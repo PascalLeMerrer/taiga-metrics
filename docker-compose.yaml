@@ -1,29 +1,20 @@
 version: "3"
 services:
-  frontend:
-    container_name: frontend
-    build:
-      context: ./front-end
-      dockerfile: Dockerfile-front-end
-    volumes:
-      - ./front-end:/usr/src/app
-    ports:
-      - 80:8080
-      - 41141:41141
-    depends_on:
-      - server
 
   server:
     container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile-server
+      args:
+        http_proxy:
     volumes:
       - ./server:/usr/src/app
     ports:
       - 4000:5000
     depends_on:
       - db
+      - simulator
     environment:
       POSTGRES_HOST: db
       # Postgres will create the DB with this name and user if needed
@@ -31,6 +22,7 @@ services:
       # The next values will be read from .env file
       POSTGRES_USER:
       POSTGRES_PASSWORD:
+      TAIGA_API_URL:
 
   db:
     container_name: db
@@ -44,11 +36,23 @@ services:
       POSTGRES_USER:
       POSTGRES_PASSWORD:
 
+  simulator:
+    container_name: simulator
+    build:
+      context: ./api_simulator
+      dockerfile: Dockerfile-simulator
+      args:
+          http_proxy:
+    ports:
+      - 127.0.0.1:3000:3000
+
   test:
     container_name: test
     build:
         context: ./feature-tests
         dockerfile: Dockerfile-feature-tests
+        args:
+          http_proxy:
     volumes:
       - ./feature-tests:/usr/src/app
     depends_on:

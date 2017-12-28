@@ -1,3 +1,9 @@
 .DS_Store
+.idea
 
 *.pyc
+
+elm-stuff
+node_modules
+
+taigametrics.js

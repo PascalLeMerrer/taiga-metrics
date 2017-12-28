@@ -1,21 +1,20 @@
 from flask import request, jsonify
-from app import APP
-from auth import are_valid_credentials, authenticate
+from app import app
+from auth import requires_authentication, authenticate, logout, AUTH_HEADER
 
-@APP.route('/sessions', methods = ['POST'])
+@app.route('/sessions', methods = ['POST'])
 def login():
-    """ authenticates a given user """
-    data = request.get_json()
+    user_profile = authenticate(request.get_json())
+    if user_profile is False:
+        response = jsonify(message ="Unauthorized")
+        response.status_code = 401
+        return response
+    response = jsonify(user_profile)
+    return response, 201
 
-    # fake implementation
-    # TODO query Taiga API
-    # and put Token in DB, with an expiration timestamp
-    if not are_valid_credentials(data):
-        return authenticate()
-
-    response = jsonify(
-        username="test-user",
-        full_display_name="TEST USER",
-        auth_token="TEST_AUTH_TOKEN"
-    )
-    return response
+@app.route('/sessions', methods = ['DELETE'])
+@requires_authentication
+def kill_session():
+    token = request.headers[AUTH_HEADER]
+    logout(token)
+    return "", 204

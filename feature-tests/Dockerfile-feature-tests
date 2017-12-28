@@ -7,6 +7,9 @@ RUN apt-get -y update && \
 
 WORKDIR /usr/src/app
 
+ARG http_proxy="$http_proxy"
+ARG https_proxy="$http_proxy"
+
 COPY ./requirements.txt ./
 RUN pip install  --upgrade pip && pip install -r requirements.txt
 

@@ -98,23 +98,36 @@ def authenticate_as_test_user(context):
         When I make a POST request to "/sessions"
         """
         {
-          "username": "test-user",
+          "username": "test-username",
           "password": "test-password"
         }
         """
-        Then the response status should be 200
+        Then the response status should be 201
         And the JSON at path "auth_token" should match "\w"
         And the JSON should contain
         """
         {
-          "username": "test-user",
+          "username": "test-username",
           "full_display_name": "TEST USER"
         }
         """
         Then I set the header "Authorization" to the JSON value at path "auth_token"
         ''')
 
-@behave.given('I reset the database content')
+
+@behave.then('I disconnect myself')
+def disconnect(context):
+    context.execute_steps(u'''
+        Given I am using server "$SERVER"
+        And I set "Accept" header to "application/json"
+        And I set "Content-Type" header to "application/json"
+        When I make a DELETE request to "/sessions"
+        Then the response status should be 204
+    ''')
+
+
+@behave.then('I reset the database content')
 def reset_db(context):
     cursor.execute("DELETE FROM project_config WHERE 1=1")
+    cursor.execute("DELETE FROM user_sessions WHERE 1=1")
     connection.commit()

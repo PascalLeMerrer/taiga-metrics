@@ -14,6 +14,31 @@ of the Kanban Board every day. Here is an example of CFD by Paul Klipp:
 
 ![](http://www.paulklipp.com/images/cfd.png)
 
+# Set up, test and run
+
+## Installation
+
+Requirements:
+* [Node 8+](https://nodejs.org/en/)
+* [Elm](http://elm-lang.org/)
+* [Docker](https://www.docker.com/)
+
+
+Clone the code, then run all tests:
+
+```
+make test
+```
+
+If all tests pass you can build the client and run the server:
+
+```
+make client
+make run
+```
+
+Just type `make` to get the full command list.
+
 # Configuration
 
 Taiga Metrics must be deployed on your own servers.

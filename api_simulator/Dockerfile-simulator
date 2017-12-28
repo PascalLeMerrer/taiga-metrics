@@ -1,0 +1,16 @@
+FROM node:8-alpine
+
+ARG http_proxy="$http_proxy"
+ARG https_proxy="$http_proxy"
+
+WORKDIR usr/src/app
+
+RUN npm install json-server
+
+COPY taigaApiSimulator.js .
+COPY routes.json .
+COPY db.json .
+
+EXPOSE 3000
+
+CMD ["node", "taigaApiSimulator.js"]

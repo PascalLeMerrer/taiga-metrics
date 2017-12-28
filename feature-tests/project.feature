@@ -4,6 +4,7 @@
 
   Background: Set target server address and headers
     Given I am using server "$SERVER"
+    Then I reset the database content
 
   @project
   Scenario: Non authenticated used cannot access projects
