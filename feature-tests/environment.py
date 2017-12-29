@@ -3,8 +3,8 @@ from behave_http.environment import before_scenario
 
 default_env = {
     'SERVER': 'http://server:5000',
-    'USERNAME': 'test-username',
-    'PASSWORD': 'test-password'
+    'USERNAME': 'user',
+    'PASSWORD': 'pass'
 }
 
 def before_all(context):

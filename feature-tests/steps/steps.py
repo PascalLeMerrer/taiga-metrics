@@ -98,8 +98,8 @@ def authenticate_as_test_user(context):
         When I make a POST request to "/sessions"
         """
         {
-          "username": "test-username",
-          "password": "test-password"
+          "username": "user",
+          "password": "pass"
         }
         """
         Then the response status should be 201
@@ -107,7 +107,7 @@ def authenticate_as_test_user(context):
         And the JSON should contain
         """
         {
-          "username": "test-username",
+          "username": "user",
           "full_display_name": "TEST USER"
         }
         """
